@@ -727,6 +727,36 @@ const GAS_RETRYABLE_ACTIONS = new Set([
 ]);
 const GAS_RETRY_DELAYS = [800, 1800]; // ms — 2 retries total
 
+// v2.3.0: every raw fetch() to the Apps Script Web App previously had NO
+// timeout at all — a slow/hung request (a cold start, or the shared
+// concurrent-execution ceiling queueing this request behind others; see
+// the _acquireLock()/LOCK_BUSY comments in Code.gs for why that queue can
+// run deep under real multi-user load) would just sit there with the
+// loading spinner up until the BROWSER itself eventually gave up, which
+// can take minutes. That's exactly what "keeps loading for a long time"
+// describes. GAS_FETCH_TIMEOUT_MS bounds any single attempt; a timeout is
+// then treated exactly like any other transient failure — it flows into
+// the SAME canRetry-gated retry logic below (so it's still only silently
+// retried for actions where repeating the request can't create a
+// duplicate — see the comment on GAS_RETRYABLE_ACTIONS), instead of
+// hanging indefinitely.
+const GAS_FETCH_TIMEOUT_MS = 25000;
+async function _fetchWithTimeout(url, opts, timeoutMs) {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), timeoutMs || GAS_FETCH_TIMEOUT_MS);
+  try {
+    return await fetch(url, { ...opts, signal: ctrl.signal });
+  } finally {
+    clearTimeout(t);
+  }
+}
+// True when a caught error is this timeout firing (as opposed to a real
+// network failure) — used to give the user a clearer message than the
+// browser's own generic "The user aborted a request."
+function _isAbortError(e) {
+  return e && (e.name === 'AbortError' || /aborted/i.test(String(e.message||'')));
+}
+
 // Matches the wording Apps Script/Sheets itself uses for a TRANSIENT,
 // infrastructure-level failure (a Sheets service hiccup, a lock timeout,
 // hitting the concurrent-execution ceiling) — as opposed to a real
@@ -777,7 +807,7 @@ async function gasCall(action, data={}, _attempt=0) {
   try {
     const body = { action, ...data };
     if (SES && SES.token) body.token = SES.token;
-    const r = await fetch(API_URL, {
+    const r = await _fetchWithTimeout(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify(body)
@@ -824,7 +854,7 @@ async function gasCall(action, data={}, _attempt=0) {
       if (relogged) {
         // Retry the original call with new token
         body.token = SES.token;
-        const r2 = await fetch(API_URL, {
+        const r2 = await _fetchWithTimeout(API_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain' },
           body: JSON.stringify(body)
@@ -847,6 +877,16 @@ async function gasCall(action, data={}, _attempt=0) {
     if (canRetry && _attempt < GAS_RETRY_DELAYS.length) {
       await _sleep(GAS_RETRY_DELAYS[_attempt]);
       return gasCall(action, data, _attempt+1);
+    }
+    // A timeout (see GAS_FETCH_TIMEOUT_MS above) doesn't tell us whether
+    // the request landed server-side before we gave up waiting — same
+    // ambiguity as a lost network response, so for a non-retryable
+    // (write) action this deliberately does NOT silently retry, and says
+    // so explicitly rather than showing the browser's generic abort text.
+    if (_isAbortError(e)) {
+      return { success: false, error: canRetry
+        ? 'Server is taking too long to respond — please try again in a moment.'
+        : 'Server is taking too long to respond — please check whether this went through before retrying.' };
     }
     return { success: false, error: e.message };
   }
@@ -1305,8 +1345,8 @@ async function doLogout(){
   // already back at the login screen regardless of whether this succeeds.
   if(GAS_OK&&tok){
     try{
-      await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain'},
-        body:JSON.stringify({action:'logout',token:tok})});
+      await _fetchWithTimeout(API_URL,{method:'POST',headers:{'Content-Type':'text/plain'},
+        body:JSON.stringify({action:'logout',token:tok})}, 8000);
     }catch(_){}
   }
 }

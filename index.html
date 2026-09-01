@@ -503,6 +503,16 @@ span[style*="color:rgba(255,193,7"]{color:var(--amber)!important}
   </div>
 </div>
 
+<!-- ═══ PUBLIC TASK ASSIGNING FORM ═══ -->
+<div id="pubAssignWrap" class="pub-wrap" style="display:none">
+  <div class="pub-card" style="max-width:560px">
+    <div class="pub-hd">
+      <div class="pub-hd-t"><h1>Assign a Task</h1><p>Link HR Solution Pvt. Ltd. — Quick Task Assign</p></div>
+    </div>
+    <div class="pub-body" id="pubAssignBody">Loading…</div>
+  </div>
+</div>
+
 <!-- ═══ LOGIN ═══ -->
 <div class="lw" id="loginWrap">
   <div class="lc">
@@ -533,6 +543,7 @@ span[style*="color:rgba(255,193,7"]{color:var(--amber)!important}
       <div class="lforms">
         <a href="?form=enquiry" target="_blank">Enquiry Form</a>
         <a href="?form=client" target="_blank">Client Registration</a>
+        <a href="?form=assign" target="_blank">Assign a Task</a>
       </div>
       <p class="lfoot">© 2025 Link HR Solution Pvt. Ltd. — Hire to Retire</p>
     </div>
@@ -585,6 +596,7 @@ span[style*="color:rgba(255,193,7"]{color:var(--amber)!important}
       <div class="nl">Public Forms</div>
       <button class="ni" onclick="window.open('?form=enquiry','_blank')"><svg viewBox="0 0 24 24"><path d="M19 4H5c-1.11 0-2 .9-2 2v12c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.89-2-2-2zm0 14H5V8h14v10z"/></svg>Enquiry Form ↗</button>
       <button class="ni" onclick="window.open('?form=client','_blank')"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>Client Reg Form ↗</button>
+      <button class="ni" onclick="window.open('?form=assign','_blank')"><svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>Assign a Task ↗</button>
     </nav>
     <div class="sbu">
       <div class="av" id="sbAv">A</div>
@@ -1183,6 +1195,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   const q=new URLSearchParams(location.search);
   if(q.get('form')==='enquiry'){showPubEnq();return}
   if(q.get('form')==='client'){showPubCli();return}
+  if(q.get('form')==='assign'){showPubAssign();return}
   if(q.get('ttask')){showPubTask(q.get('ttask'),q.get('ttoken'),q.get('taction')||'view');return}
   // Use sessionStorage so session clears when tab/browser is closed
   try{const s=JSON.parse(sessionStorage.getItem('lhr_ses'));if(s?.user||s?.token){SES=s;bootApp();}}catch(_){}
@@ -1282,6 +1295,83 @@ async function submitPubCli(){
     <p>Your client account has been registered. Our team will verify and activate your account.</p>
     <div class="pub-id">${id}</div>
     <p style="font-size:12px;color:var(--t3)">Please save your Client ID for future reference.</p>
+  </div>`;
+}
+
+// ════════════════════════════════════
+//  PUBLIC — TASK ASSIGNING FORM (mobile-friendly, no login required)
+//  Uses the existing Employee Master, creates the Task ID and saves into
+//  the existing Tasks sheet, triggers the existing email-notification
+//  flow, and shows the existing employee-update-form link — via the
+//  getPublicTaskFormData / submitPublicTask backend actions. No separate
+//  data store; a task from this form is indistinguishable from one
+//  created in the logged-in app.
+// ════════════════════════════════════
+let PUB_ASSIGN_DATA={assignees:[],assigners:[],categories:[]};
+async function showPubAssign(){
+  document.getElementById('loginWrap').style.display='none';
+  document.getElementById('pubAssignWrap').style.display='flex';
+  const body=document.getElementById('pubAssignBody');
+  const res=await gasCall('getPublicTaskFormData',{});
+  if(!res.success){
+    body.innerHTML=`<div class="pub-success"><div class="ic">⚠️</div><h2 style="color:var(--red)">Unable to Load Form</h2><p>${esc(res.error||'Please try again in a moment.')}</p></div>`;
+    return;
+  }
+  PUB_ASSIGN_DATA=res.data;
+  renderPubAssignForm();
+}
+function renderPubAssignForm(){
+  const body=document.getElementById('pubAssignBody');
+  const assignerOpts=PUB_ASSIGN_DATA.assigners.map(u=>`<option value="${esc(u.Username)}">${esc(u.Name)} (${esc(u.Role)})</option>`).join('');
+  const assigneeOpts=PUB_ASSIGN_DATA.assignees.map(u=>`<option value="${esc(u.Username)}">${esc(u.Name)}${u.Dept?' — '+esc(u.Dept):''}</option>`).join('');
+  const catOpts=(PUB_ASSIGN_DATA.categories||[]).map(c=>`<option value="${esc(c.Name)}">${esc(c.Name)}</option>`).join('')||'<option value="General">General</option>';
+  const priOpts=['Low','Medium','High','Critical'].map(p=>`<option value="${p}" ${p==='Medium'?'selected':''}>${p}</option>`).join('');
+  body.innerHTML=`
+  <div class="fsec" style="margin-top:0">Who's Assigning</div>
+  <div class="fg">
+    <div class="ff s2"><label>Assigned By *</label><select id="paBy"><option value="">Select your name…</option>${assignerOpts}</select></div>
+  </div>
+  <div class="fsec">Task Details</div>
+  <div class="fg">
+    <div class="ff s2"><label>Assign To *</label><select id="paTo"><option value="">Select employee…</option>${assigneeOpts}</select></div>
+    <div class="ff s2"><label>Title *</label><input id="paTitle" placeholder="What needs to be done?"></div>
+    <div class="ff s2"><label>Description</label><textarea id="paDesc" placeholder="Optional details…"></textarea></div>
+    <div class="ff"><label>Category</label><select id="paCategory">${catOpts}</select></div>
+    <div class="ff"><label>Priority</label><select id="paPriority">${priOpts}</select></div>
+    <div class="ff"><label>Due Date *</label><input type="date" id="paDueDate"></div>
+    <div class="ff"><label>Due Time</label><input type="time" id="paDueTime"></div>
+  </div>
+  <div style="margin-top:20px;display:flex;justify-content:flex-end;gap:10px">
+    <button class="btn badd" onclick="submitPubAssign()">🚀 Assign Task</button>
+  </div>
+  <p style="font-size:11px;color:var(--t3);margin-top:14px;text-align:center">The assignee will be notified by email — immediately if due today, otherwise on the due date.</p>`;
+  draftAttach('assignTask',['paBy','paTo','paTitle','paDesc','paCategory','paPriority','paDueDate','paDueTime']);
+}
+async function submitPubAssign(){
+  const assignedBy=v('paBy'),assignedTo=v('paTo'),title=v('paTitle'),dueDate=v('paDueDate');
+  if(!assignedBy||!assignedTo||!title||!dueDate){toast('Fill all required fields','e');return}
+  const submitBtn=[...document.querySelectorAll('#pubAssignWrap button')].find(b=>/Assign Task/i.test(b.textContent));
+  let restoreBtn=null;
+  if(submitBtn){restoreBtn=submitBtn.innerHTML;submitBtn.disabled=true;submitBtn.innerHTML='<span class="btn-sp"></span> Assigning…';}
+  const res=await gasCall('submitPublicTask',{
+    assignedBy,assignedTo,title,description:v('paDesc'),category:v('paCategory'),
+    priority:v('paPriority'),dueDate,dueTime:v('paDueTime')
+  });
+  if(!res.success){
+    toast(res.error||'Could not assign task','e');
+    if(submitBtn){submitBtn.disabled=false;submitBtn.innerHTML=restoreBtn;}
+    return;
+  }
+  draftClear('assignTask');
+  document.getElementById('pubAssignBody').innerHTML=`
+  <div class="pub-success">
+    <div class="ic">✅</div>
+    <h2>Task Assigned!</h2>
+    <p>"${esc(title)}" has been assigned to <strong>${esc(res.assigneeName)}</strong>.</p>
+    <div class="pub-id">${esc(res.id)}</div>
+    <p style="font-size:12px;color:var(--t3)">${res.dueToday?'An email notification has been sent.':'This task is due in the future — the assignee will be emailed automatically on the due date.'}</p>
+    ${res.updateLink?`<div class="fsec" style="margin-top:16px">Employee Update Link</div><p style="font-size:12px;color:var(--t2);word-break:break-all">${esc(res.updateLink)}</p>`:''}
+    <button class="btn badd" onclick="location.href='?form=assign'" style="margin-top:16px">Assign Another Task</button>
   </div>`;
 }
 
@@ -1619,6 +1709,7 @@ function dDash(){
       <a href="?form=enquiry" target="_blank" class="btn bteal" style="flex:1;justify-content:center;font-size:12px">Enquiry Form ↗</a>
       <a href="?form=client" target="_blank" class="btn borg" style="flex:1;justify-content:center;font-size:12px">Client Form ↗</a>
     </div>
+    ${isTaskManagerRole()?`<a href="?form=assign" target="_blank" class="btn badd" style="justify-content:center;font-size:12px">📱 Assign a Task (mobile) ↗</a>`:''}
   </div></div></div>
   <div class="two">
   <div class="card"><div class="card-hd"><h3>Recent Enquiries</h3><button class="btn bout" onclick="go('enq')" style="padding:5px 10px;font-size:12px">View All</button></div>
@@ -2016,9 +2107,9 @@ async function doConv(enqId){
 // ════════════════════════════════════
 //  CLIENTS
 // ════════════════════════════════════
-let cP=1,cSr='',cSt='',cDF='',cSO='date_desc';
+let cP=1,cSr='',cSt='',cDF='',cSO='name_asc';
 async function rClients(){
-  cP=1;cSr='';cSt='';cDF='';cSO='date_desc';
+  cP=1;cSr='';cSt='';cDF='';cSO='name_asc';
   const hadCache=CLIENTS.length>0;
   if(hadCache)dClients();
   if(GAS_OK&&_shouldRefresh('clients')){
@@ -4255,8 +4346,10 @@ async function dAppraisal(){
   if(!stillOn('taskappraisal'))return;
   if(!res.success){paintPA(`<div class="empty">${esc(res.error||'Failed to load')}</div>`);return}
   const rows=res.data;
-  const exp=rows.map(r=>({Rank:r.rank,Employee:r.name,'Tasks Assigned':r.tasksAssigned,'Tasks Completed':r.tasksCompleted,
-    'On-Time %':r.onTimePct,'Overdue':r.overdueCount,'Avg Quality':r.qualityAvg??'—','Score':r.score}));
+  const exp=rows.map(r=>({Rank:r.rank??'—','Dept Rank':r.deptRank??'—',Employee:r.name,Dept:r.dept||'—',
+    Due:r.tasksAssigned,'Tasks Completed':r.tasksCompleted,'Tasks Pending':r.tasksPending,'Not Yet Due':r.tasksNotYetDue,
+    'On-Time %':r.onTimePct??'—','Overdue %':r.overduePct??'—','Overdue Count':r.overdueCount,'Avg Quality':r.qualityAvg??'—',
+    'Raw Score':r.rawScore??'—',Score:r.score??'—','Low Sample':r.lowSample?'Yes':'No'}));
   let h=`<div class="ph"><div><h2>Employee Appraisal Dashboard</h2><p class="ph-sub">Productivity scores for ${fd(apFrom)} → ${fd(apTo)}</p></div>
   <div class="ph-act"><button class="btn bexp" onclick="xls(window._apExport,'appraisal')">Export</button></div></div>
   <div class="card" style="margin-bottom:18px">
@@ -4264,15 +4357,24 @@ async function dAppraisal(){
     <div style="display:flex;align-items:center;gap:6px"><label style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase">From</label><input type="date" class="fsel" value="${apFrom}" onchange="apFrom=this.value;dAppraisal()"></div>
     <div style="display:flex;align-items:center;gap:6px"><label style="font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase">To</label><input type="date" class="fsel" value="${apTo}" onchange="apTo=this.value;dAppraisal()"></div>
   </div>
-  <p style="font-size:12px;color:var(--t3);margin-top:6px">Score = 35% on-time completion + 25% completion rate + 15% quality rating + 15% overdue penalty + 10% completion speed.</p>
+  <p style="font-size:12px;color:var(--t3);margin-top:6px">Score = 40% on-time rate + 20% completion rate + 20% (1 − overdue rate) + 10% quality rating + 10% completion speed — every term is a rate over tasks whose due date has arrived, so employees with different workloads compare fairly. Only tasks due within this range — or carried over from an earlier period and still open — are counted; tasks not yet due are excluded until their due date arrives.</p>
+  <p style="font-size:12px;color:var(--t3);margin-top:4px">Rows marked <strong>*</strong> have fewer than 5 resolved tasks so far and are shrunk toward the group average so one task can't put someone at the very top or bottom — hover the score to see the raw, unshrunk number. "No data yet" means nothing assigned to them has come due in this range yet.</p>
   </div>
-  <div class="card"><div class="tw"><table><tr><th>Rank</th><th>Employee</th><th>Assigned</th><th>Completed</th><th>On-Time %</th><th>Overdue</th><th>Quality</th><th>Score</th></tr>`;
-  if(!rows.length)h+=`<tr><td colspan="8" class="empty">No task data in this range</td></tr>`;
+  <div class="card"><div class="tw"><table><tr><th>Rank</th><th>Dept Rank</th><th>Employee</th><th>Due</th><th>Completed</th><th>Pending</th><th>Upcoming</th><th>On-Time %</th><th>Overdue %</th><th>Quality</th><th>Score</th></tr>`;
+  if(!rows.length)h+=`<tr><td colspan="11" class="empty">No task data in this range</td></tr>`;
   rows.forEach(r=>{
+    if(r.score===null){
+      h+=`<tr><td>—</td><td>—</td><td>${esc(r.name)}</td><td>${r.tasksAssigned}</td><td>${r.tasksCompleted}</td><td>${r.tasksPending}</td><td>${r.tasksNotYetDue}</td>
+      <td>—</td><td>—</td><td>${r.qualityAvg??'—'}</td>
+      <td><span class="badge" style="background:var(--bg2);color:var(--t3)">No data yet</span></td></tr>`;
+      return;
+    }
     const color=r.score>=80?'var(--green)':r.score>=60?'var(--amber)':'var(--red)';
-    h+=`<tr><td><strong>#${r.rank}</strong></td><td>${esc(r.name)}</td><td>${r.tasksAssigned}</td><td>${r.tasksCompleted}</td>
-    <td>${r.onTimePct}%</td><td>${r.overdueCount}</td><td>${r.qualityAvg??'—'}</td>
-    <td><div style="display:flex;align-items:center;gap:8px"><strong style="color:${color}">${r.score}</strong>
+    const flag=r.lowSample?' *':'';
+    const tip=r.lowSample?`Shrunk toward the group average — only ${r.tasksAssigned} resolved task(s) so far. Raw score: ${r.rawScore}`:`Raw score: ${r.rawScore}`;
+    h+=`<tr><td><strong>#${r.rank}</strong></td><td>#${r.deptRank}</td><td>${esc(r.name)}</td><td>${r.tasksAssigned}</td><td>${r.tasksCompleted}</td><td>${r.tasksPending}</td><td>${r.tasksNotYetDue}</td>
+    <td>${r.onTimePct}%</td><td>${r.overduePct}%</td><td>${r.qualityAvg??'—'}</td>
+    <td><div style="display:flex;align-items:center;gap:8px"><strong style="color:${color}" title="${esc(tip)}">${r.score}${flag}</strong>
     <div class="scorebar" style="width:70px"><div class="scorebar-f" style="width:${r.score}%;background:${color}"></div></div></div></td></tr>`;
   });
   h+=`</table></div></div>`;

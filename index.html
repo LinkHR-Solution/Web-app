@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <!-- SheetJS: reads real .xlsx/.xls binary files client-side for Bulk Import Tasks -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
 <style>
 :root{
   /* Premium brand palette — deep navy ink + refined gold accent */
@@ -466,6 +467,36 @@ strong[style*="color:var(--primary)"],strong[style*="color:var(--accent)"]{color
 span[style*="color:var(--teal)"],span[style*="color:var(--teal)"]{color:var(--teal)!important}
 span[style*="color:var(--green)"]{color:var(--green)!important}
 span[style*="color:rgba(255,193,7"]{color:var(--amber)!important}
+
+/* ── DATA ANALYSIS — ERP Analytics Dashboard ── */
+.da-slicers{display:flex;flex-wrap:wrap;gap:9px;align-items:center}
+.da-slicers .fsel,.da-slicers input[type=date]{min-width:0}
+.da-slicers label.dal{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;display:flex;flex-direction:column;gap:3px}
+.da-kpi-sub{font-size:11px;font-weight:700;margin-top:4px;display:flex;align-items:center;gap:3px}
+.da-up{color:var(--green)}.da-down{color:var(--red)}.da-flat{color:var(--t3)}
+.da-grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
+.da-grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-bottom:18px}
+.da-chart-box{position:relative;height:270px}
+.da-chart-box.sm{height:230px}
+.da-heat-cell{cursor:pointer;text-align:right;font-family:'Courier New',monospace;font-weight:600;font-size:12.5px;transition:outline .1s;white-space:nowrap}
+.da-heat-cell:hover{outline:2px solid var(--primary);outline-offset:-2px}
+.da-breadcrumb{display:flex;align-items:center;gap:7px;font-size:13px;margin-bottom:16px;flex-wrap:wrap}
+.da-breadcrumb .bl{color:var(--primary);cursor:pointer;font-weight:700}
+.da-breadcrumb .bl:hover{text-decoration:underline}
+.da-breadcrumb .bc{color:var(--t1);font-weight:700}
+.da-breadcrumb .bs{color:var(--t4)}
+.da-pareto-bar{height:6px;border-radius:3px;background:var(--bg2);overflow:hidden;margin-top:4px;min-width:60px}
+.da-pareto-bar>div{height:100%;background:linear-gradient(90deg,var(--teal),var(--primary))}
+.da-rank{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--bg2);color:var(--t2);font-size:11px;font-weight:800}
+.da-rank.top{background:var(--gold-bg);color:var(--accent)}
+.da-insight-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px}
+.da-insight-row:last-child{border-bottom:none}
+.da-insight-row .lbl{color:var(--t2)}
+.da-insight-row .val{font-weight:800;color:var(--t1)}
+.da-chart-empty{display:flex;align-items:center;justify-content:center;height:100%;color:var(--t3);font-size:12px}
+@media(max-width:900px){.da-grid2,.da-grid3{grid-template-columns:1fr}}
+@media(max-width:768px){.da-slicers{gap:7px}.da-slicers .fsel,.da-slicers input[type=date]{flex:1;min-width:130px}}
+
 </style>
 </head>
 <body>
@@ -598,6 +629,7 @@ span[style*="color:rgba(255,193,7"]{color:var(--amber)!important}
       <button class="ni" data-p="dash" onclick="go('dash')" id="niDash"><svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>Dashboard</button>
       <button class="ni active" data-p="home" onclick="go('home')" id="niHome"><svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Home</button>
       <div id="mainPagesNavSlot"></div>
+      <button class="ni" data-p="danalysis" onclick="go('danalysis')" id="niDataAnalysis"><svg viewBox="0 0 24 24"><path d="M5 9.2h3V19H5V9.2zM10.6 5h2.8v14h-2.8V5zm5.6 8H19v6h-2.8v-6z"/></svg>Data Analysis</button>
       <div class="nl">Enquiry</div>
       <button class="ni" data-p="enq" onclick="go('enq')"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>Enquiries</button>
       <button class="ni" data-p="clients" onclick="go('clients')"><svg viewBox="0 0 24 24"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/></svg>Client Master</button>
@@ -1737,9 +1769,9 @@ async function bootApp(){
 // ════════════════════════════════════
 //  NAV
 // ════════════════════════════════════
-const PTITLES={home:'Home',dash:'Dashboard',enq:'Enquiries',clients:'Client Master',myreq:'My Bill Requests',newreq:'New Bill Request',allreq:'All Requests',pi:'PI Management',inv:'Invoice Upload',payments:'Payment Tracker',rep:'Reports',users:'User Management',employees:'Employee Master',cos:'Companies',applinks:'Application Links',mainpages:'Main Page Management',
+const PTITLES={home:'Home',dash:'Dashboard',enq:'Enquiries',clients:'Client Master',myreq:'My Bill Requests',newreq:'New Bill Request',allreq:'All Requests',pi:'PI Management',inv:'Invoice Upload',payments:'Payment Tracker',rep:'Reports',users:'User Management',employees:'Employee Master',cos:'Companies',applinks:'Application Links',mainpages:'Main Page Management',danalysis:'Data Analysis',
   taskdash:'Task Dashboard',mytasks:'My Tasks',alltasks:'All Tasks',taskappraisal:'Appraisals',taskimport:'Bulk Import Tasks',taskcats:'Task Categories',taskrep:'Task Reports'};
-const PFNS={home:rHome,dash:rDash,enq:rEnq,clients:rClients,myreq:rMyReq,newreq:rNewReq,allreq:rAllReq,pi:rPI,inv:rInv,payments:rPayments,rep:rRep,users:rUsers,employees:rEmployees,cos:rCos,applinks:rAppLinks,mainpages:rMainPages,
+const PFNS={home:rHome,dash:rDash,enq:rEnq,clients:rClients,myreq:rMyReq,newreq:rNewReq,allreq:rAllReq,pi:rPI,inv:rInv,payments:rPayments,rep:rRep,users:rUsers,employees:rEmployees,cos:rCos,applinks:rAppLinks,mainpages:rMainPages,danalysis:rDataAnalysis,
   taskdash:rTaskDash,mytasks:rMyTasks,alltasks:rAllTasks,taskappraisal:rAppraisal,taskimport:rTaskImport,taskcats:rTaskCats,taskrep:rTaskRep};
 
 function go(p){
@@ -4903,6 +4935,590 @@ async function dTaskRep(){
   h+=`</table></div></div>`;
   window._trExport=exp;
   paintPA(h);
+}
+
+
+// ════════════════════════════════════════════════════════════════
+//  DATA ANALYSIS — Power BI–style ERP Analytics Dashboard
+//  100% client-side, driven by the same live REQUESTS/CLIENTS arrays
+//  every other page already uses (loaded via bootstrap, refreshed via
+//  the existing getRequests action) — no new backend endpoints, no
+//  schema changes, no change to any other page's behaviour.
+//
+//  "Billed Amount" for a request = invoiceAmt (final, GST-inclusive
+//  invoice value) if invoiced, else totalAmt (GST-inclusive PI value)
+//  if a PI exists, else the raw requested Amount — i.e. the most
+//  authoritative figure available at that request's current stage.
+//  "Collected" = PaymentAmt actually recorded via the Payment Tracker.
+// ════════════════════════════════════════════════════════════════
+let daFrom='',daTo='',daYear='',daMonth='',daClientF='',daStatusF='',daProcessF='',daPayF='',daEmpF='';
+let daDrillClient='',daDrillMonth='';
+let daTblP=1,daTblSr='',daTblSO='date_desc';
+let daCharts={};
+const daMonthNames=['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+async function rDataAnalysis(){
+  daFrom='';daTo='';daYear='';daMonth='';daClientF='';daStatusF='';daProcessF='';daPayF='';daEmpF='';
+  daDrillClient='';daDrillMonth='';daTblP=1;daTblSr='';daTblSO='date_desc';
+  if(REQUESTS.length>0)dDataAnalysis();
+  if(GAS_OK&&_shouldRefresh('requests')){
+    try{
+      const res=await gasCall('getRequests',{});
+      if(!stillOn('danalysis'))return;
+      if(res.success)REQUESTS=mapRequests(res.data||[]);
+    }catch(e){console.warn('Data Analysis load error:',e);}
+  }
+  if(!stillOn('danalysis'))return;
+  dDataAnalysis();
+}
+
+function dDataAnalysis(){
+  if(daDrillClient){daRenderClientDrill();return;}
+  daRenderSummary();
+}
+
+// ── amount / date helpers ──
+function daAmt(r){return(+r.invoiceAmt)||(+r.totalAmt)||(+r.amount)||0;}
+function daCollected(r){return+r.paymentAmt||0;}
+function daDateKey(r){return r.requestDate||r.createdAt||'';}
+function daYM(dateStr){if(!dateStr)return'';const d=new Date(dateStr);if(isNaN(d))return'';return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');}
+function daYearOf(dateStr){if(!dateStr)return'';const d=new Date(dateStr);return isNaN(d)?'':String(d.getFullYear());}
+function daMonthOf(dateStr){if(!dateStr)return'';const d=new Date(dateStr);return isNaN(d)?'':String(d.getMonth()+1);}
+function daMonthLabel(ym){if(!ym)return'—';const p=ym.split('-');const names=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];return(names[+p[1]-1]||'?')+' '+p[0];}
+function daPayStatus(r){if(r.paymentStatus)return r.paymentStatus;if(r.status==='Completed')return'Pending';return'Not Invoiced';}
+
+// ── filtering ──
+// Full filter set — used by the KPI row, matrix, rank tables, detail table and exports.
+function daFilteredRequests(){
+  let rows=[...REQUESTS];
+  if(daFrom||daTo)rows=rows.filter(r=>inCustomRange(daDateKey(r),daFrom,daTo));
+  if(daYear)rows=rows.filter(r=>daYearOf(daDateKey(r))===daYear);
+  if(daMonth)rows=rows.filter(r=>daMonthOf(daDateKey(r))===daMonth);
+  if(daClientF)rows=rows.filter(r=>r.clientId===daClientF);
+  if(daStatusF)rows=rows.filter(r=>r.status===daStatusF);
+  if(daProcessF)rows=rows.filter(r=>r.dept===daProcessF);
+  if(daPayF)rows=rows.filter(r=>daPayStatus(r)===daPayF);
+  if(daEmpF)rows=rows.filter(r=>r.byName===daEmpF);
+  if(daDrillClient)rows=rows.filter(r=>r.clientId===daDrillClient);
+  if(daDrillMonth)rows=rows.filter(r=>daYM(daDateKey(r))===daDrillMonth);
+  return rows;
+}
+// Trend/comparison rows — every slicer EXCEPT Date/Year/Month, so growth
+// charts always show full history instead of collapsing to a single point
+// whenever someone narrows the page to one month.
+function daTrendRows(){
+  let rows=[...REQUESTS];
+  if(daClientF)rows=rows.filter(r=>r.clientId===daClientF);
+  if(daStatusF)rows=rows.filter(r=>r.status===daStatusF);
+  if(daProcessF)rows=rows.filter(r=>r.dept===daProcessF);
+  if(daPayF)rows=rows.filter(r=>daPayStatus(r)===daPayF);
+  if(daEmpF)rows=rows.filter(r=>r.byName===daEmpF);
+  return rows;
+}
+
+// ── aggregations ──
+function daBuildClientRank(rows){
+  const by={};
+  rows.forEach(r=>{
+    const cid=r.clientId||'—';
+    if(!by[cid])by[cid]={id:cid,name:r.clientName||'Unknown',count:0,billed:0,collected:0};
+    by[cid].count++;by[cid].billed+=daAmt(r);by[cid].collected+=daCollected(r);
+  });
+  const list=Object.values(by).sort((a,b)=>b.billed-a.billed);
+  const total=list.reduce((a,c)=>a+c.billed,0)||1;
+  let cum=0;
+  list.forEach(c=>{c.pct=c.billed/total*100;cum+=c.pct;c.cum=cum;c.outstanding=Math.max(0,c.billed-c.collected);});
+  return list;
+}
+function daBuildEmpRank(rows){
+  const by={};
+  rows.forEach(r=>{const e=r.byName||'Unknown';if(!by[e])by[e]={name:e,count:0,billed:0};by[e].count++;by[e].billed+=daAmt(r);});
+  return Object.values(by).sort((a,b)=>b.billed-a.billed).slice(0,5);
+}
+function daDormantClients(){
+  const cutoff=new Date();cutoff.setDate(cutoff.getDate()-90);
+  const last={};
+  REQUESTS.forEach(r=>{
+    const cid=r.clientId;if(!cid)return;
+    const d=new Date(daDateKey(r));if(isNaN(d))return;
+    if(!last[cid]||d>last[cid])last[cid]=d;
+  });
+  return CLIENTS.filter(c=>last[c.id]&&last[c.id]<cutoff).map(c=>({id:c.id,name:c.company,last:last[c.id]})).sort((a,b)=>a.last-b.last);
+}
+function daAvgDays(rows,fromField,toField){
+  let sum=0,n=0;
+  rows.forEach(r=>{
+    const a=r[fromField],b=r[toField];if(!a||!b)return;
+    const d1=new Date(a),d2=new Date(b);if(isNaN(d1)||isNaN(d2))return;
+    const diff=(d2-d1)/86400000;if(diff<0)return;
+    sum+=diff;n++;
+  });
+  return n?Math.round(sum/n):null;
+}
+function daRunRate(rows){
+  const now=new Date(),y=now.getFullYear(),m=now.getMonth();
+  const mtd=rows.filter(r=>{const d=new Date(daDateKey(r));return!isNaN(d)&&d.getFullYear()===y&&d.getMonth()===m;}).reduce((a,r)=>a+daAmt(r),0);
+  const daysElapsed=now.getDate(),daysInMonth=new Date(y,m+1,0).getDate();
+  return{mtd,projected:daysElapsed>0?(mtd/daysElapsed*daysInMonth):0,daysElapsed,daysInMonth};
+}
+function daMoMYoY(rows){
+  const now=new Date(),y=now.getFullYear(),m=now.getMonth();
+  const sum=pred=>rows.filter(pred).reduce((a,r)=>a+daAmt(r),0);
+  const thisMonth=sum(r=>{const d=new Date(daDateKey(r));return!isNaN(d)&&d.getFullYear()===y&&d.getMonth()===m;});
+  const lm=new Date(y,m-1,1);
+  const lastMonth=sum(r=>{const d=new Date(daDateKey(r));return!isNaN(d)&&d.getFullYear()===lm.getFullYear()&&d.getMonth()===lm.getMonth();});
+  const thisYear=sum(r=>{const d=new Date(daDateKey(r));return!isNaN(d)&&d.getFullYear()===y;});
+  const lastYear=sum(r=>{const d=new Date(daDateKey(r));return!isNaN(d)&&d.getFullYear()===y-1;});
+  const pct=(cur,prev)=>prev>0?((cur-prev)/prev*100):(cur>0?100:0);
+  return{thisMonth,lastMonth,momPct:pct(thisMonth,lastMonth),thisYear,lastYear,yoyPct:pct(thisYear,lastYear)};
+}
+function daMonthlyTrend(rows){
+  const by={};
+  rows.forEach(r=>{const ym=daYM(daDateKey(r));if(!ym)return;if(!by[ym])by[ym]={billed:0,collected:0};by[ym].billed+=daAmt(r);by[ym].collected+=daCollected(r);});
+  const keys=Object.keys(by).sort().slice(-12);
+  return{labels:keys.map(daMonthLabel),billed:keys.map(k=>by[k].billed),collected:keys.map(k=>by[k].collected)};
+}
+function daYearlyTotals(rows){
+  const by={};
+  rows.forEach(r=>{const y=daYearOf(daDateKey(r));if(!y)return;by[y]=(by[y]||0)+daAmt(r);});
+  const keys=Object.keys(by).sort();
+  return{labels:keys,values:keys.map(k=>by[k])};
+}
+function daProcessBreakdown(rows){const by={};rows.forEach(r=>{const p=r.dept||'Unspecified';by[p]=(by[p]||0)+daAmt(r);});return by;}
+function daStatusBreakdown(rows){const by={};rows.forEach(r=>{const s=r.status||'Unknown';by[s]=(by[s]||0)+1;});return by;}
+function daPayBreakdown(rows){const by={};rows.forEach(r=>{const p=daPayStatus(r);by[p]=(by[p]||0)+1;});return by;}
+
+// ── small UI builders ──
+function daTrendTag(pct,label){
+  if(pct==null||!isFinite(pct))return'';
+  const cls=pct>0.5?'da-up':pct<-0.5?'da-down':'da-flat';
+  const arrow=pct>0.5?'▲':pct<-0.5?'▼':'▶';
+  return`<div class="da-kpi-sub ${cls}">${arrow} ${Math.abs(pct).toFixed(1)}% ${esc(label)}</div>`;
+}
+function daBuildHeatmap(rows){
+  const by={};
+  rows.forEach(r=>{
+    const cid=r.clientId||'—';
+    if(!by[cid])by[cid]={id:cid,name:r.clientName||'Unknown',total:0,months:{}};
+    const amt=daAmt(r);by[cid].total+=amt;
+    const ym=daYM(daDateKey(r));if(!ym)return;
+    by[cid].months[ym]=(by[cid].months[ym]||0)+amt;
+  });
+  const clients=Object.values(by).sort((a,b)=>b.total-a.total).slice(0,10);
+  const monthSet=new Set();clients.forEach(c=>Object.keys(c.months).forEach(m=>monthSet.add(m)));
+  const months=[...monthSet].sort().slice(-12);
+  const max=Math.max(1,...clients.flatMap(c=>months.map(m=>c.months[m]||0)));
+  if(!clients.length)return'<div class="empty">No billing data for the selected filters</div>';
+  let h=`<div class="tw"><table><tr><th>Client</th>${months.map(m=>`<th style="text-align:right">${daMonthLabel(m)}</th>`).join('')}<th style="text-align:right">Total</th></tr>`;
+  clients.forEach(c=>{
+    h+=`<tr><td style="cursor:pointer;color:var(--primary);font-weight:700" onclick="daDrillTo('${c.id}','')">${esc(c.name)}</td>`;
+    months.forEach(m=>{
+      const v=c.months[m]||0,pct=v/max,bg=v?`rgba(13,148,136,${(0.10+pct*0.65).toFixed(2)})`:'transparent';
+      h+=`<td class="da-heat-cell" style="background:${bg}" ${v?`onclick="daDrillTo('${c.id}','${m}')"`:''} title="${esc(daMonthLabel(m))}: ${fmt(v)}">${v?fmt(v):'—'}</td>`;
+    });
+    h+=`<td style="text-align:right;font-weight:800">${fmt(c.total)}</td></tr>`;
+  });
+  h+='</table></div>';
+  return h;
+}
+function daBuildRankTable(rank){
+  if(!rank.length)return'<div class="empty">No billing data for the selected filters</div>';
+  const top=rank.slice(0,10),showBottom=rank.length>10,bottom=showBottom?[...rank].slice(-5).reverse():[];
+  let h=`<div style="font-size:12px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Top Clients</div>
+  <div class="tw"><table><tr><th>#</th><th>Client</th><th>Requests</th><th>Billed</th><th>Collected</th><th>Outstanding</th><th>Share / Cumulative</th></tr>
+  ${top.map((c,i)=>`<tr style="cursor:pointer" onclick="daDrillTo('${c.id}','')">
+    <td><span class="da-rank ${i<3?'top':''}">${i+1}</span></td>
+    <td style="font-weight:700;color:var(--primary)">${esc(c.name)}</td>
+    <td>${c.count}</td><td class="amt">${fmt(c.billed)}</td><td class="amt">${fmt(c.collected)}</td>
+    <td style="color:${c.outstanding>0?'var(--red)':'var(--t2)'}">${fmt(c.outstanding)}</td>
+    <td><div style="font-size:11px;font-weight:700">${c.pct.toFixed(1)}% · cum ${c.cum.toFixed(1)}%</div><div class="da-pareto-bar"><div style="width:${Math.min(100,c.cum).toFixed(1)}%"></div></div></td>
+  </tr>`).join('')}
+  </table></div>
+  ${showBottom?`<div style="font-size:12px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;margin:16px 0 8px">Lowest Billing Clients</div>
+  <div class="tw"><table><tr><th>Client</th><th>Requests</th><th>Billed</th></tr>
+  ${bottom.map(c=>`<tr style="cursor:pointer" onclick="daDrillTo('${c.id}','')"><td style="font-weight:700;color:var(--primary)">${esc(c.name)}</td><td>${c.count}</td><td class="amt">${fmt(c.billed)}</td></tr>`).join('')}
+  </table></div>`:''}`;
+  return h;
+}
+function daBuildDetailTable(rows){
+  let filtered=[...rows];
+  if(daTblSr){
+    const q=daTblSr.toLowerCase();
+    filtered=filtered.filter(r=>(r.id+r.clientName+(r.byName||'')+(r.purpose||'')).toLowerCase().includes(q));
+  }
+  filtered=sortRows(filtered,daTblSO,'clientName','requestDate');
+  const{rows:pg,total,pages}=pg_r(filtered,daTblP,PG);
+  window._daExport=filtered.map(r=>({
+    'Request ID':r.id,'Client':r.clientName,'Process':r.dept||'','Employee':r.byName||'',
+    'Request Date':fd(r.requestDate),'Status':r.status,'Payment Status':daPayStatus(r),
+    'Billed Amount':daAmt(r),'Collected Amount':daCollected(r),'Outstanding':Math.max(0,daAmt(r)-daCollected(r))
+  }));
+  let h=`<div class="tw"><table><tr><th>Request ID</th><th>Client</th><th>Process</th><th>Employee</th><th>Date</th><th>Status</th><th>Payment</th><th>Billed</th><th>Outstanding</th></tr>`;
+  if(!pg.length)h+='<tr><td colspan="9"><div class="empty"><div class="empty-ic">📊</div><p>No requests match these filters</p></div></td></tr>';
+  pg.forEach(r=>{
+    const out=Math.max(0,daAmt(r)-daCollected(r));
+    h+=`<tr style="cursor:pointer" onclick="viewReq('${r.id}')">
+      <td><strong style="color:var(--primary)">${esc(r.id)}</strong></td>
+      <td>${esc(r.clientName)}</td><td><span class="chip">${esc(r.dept||'—')}</span></td>
+      <td>${esc(r.byName||'—')}</td><td style="font-size:12px">${fd(r.requestDate)}</td>
+      <td>${sBadge(r.status)}</td><td>${sBadge(daPayStatus(r))}</td>
+      <td class="amt">${fmt(daAmt(r))}</td><td style="color:${out>0?'var(--red)':'var(--t2)'}">${fmt(out)}</td>
+    </tr>`;
+  });
+  h+=`</table></div>${pager(total,pages,daTblP,'daGoP')}`;
+  return h;
+}
+function daGoP(p){daTblP=p;dDataAnalysis();}
+
+// ── drill-down navigation ──
+function daDrillTo(clientId,ym){
+  daDrillClient=clientId||'';daDrillMonth=ym||'';daTblP=1;daTblSr='';
+  dDataAnalysis();
+  const pa=document.getElementById('pa');if(pa)pa.scrollTop=0;
+}
+function daBackToSummary(){daDrillClient='';daDrillMonth='';daTblP=1;daTblSr='';dDataAnalysis();}
+function daBackToClient(){daDrillMonth='';daTblP=1;daTblSr='';dDataAnalysis();}
+function daResetFilters(){
+  daFrom='';daTo='';daYear='';daMonth='';daClientF='';daStatusF='';daProcessF='';daPayF='';daEmpF='';daTblP=1;daTblSr='';
+  dDataAnalysis();
+}
+
+// ── chart options / lifecycle ──
+function daChartOpts(){
+  return{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:11}}}},
+    scales:{y:{ticks:{callback:v=>'₹'+Number(v).toLocaleString('en-IN')}},x:{ticks:{font:{size:10}}}}};
+}
+function daChartOptsH(){
+  return{responsive:true,maintainAspectRatio:false,indexAxis:'y',
+    plugins:{legend:{display:false}},
+    scales:{x:{ticks:{callback:v=>'₹'+Number(v).toLocaleString('en-IN')}}}};
+}
+function daDoughnutOpts(){
+  return{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:11,font:{size:10}}}}};
+}
+function daDestroyCharts(){Object.values(daCharts).forEach(c=>{try{c.destroy();}catch(_){}});daCharts={};}
+function daRenderCharts(trendRows,sliceRows){
+  daDestroyCharts();
+  const ids=['daChartTrend','daChartYear','daChartProcess','daChartStatus','daChartPayment','daChartTopClients'];
+  if(typeof Chart==='undefined'){
+    ids.forEach(id=>{const el=document.getElementById(id);if(el&&el.parentElement)el.parentElement.innerHTML='<div class="da-chart-empty">Chart library unavailable (offline?) — all figures above are still accurate</div>';});
+    return;
+  }
+  const palette=['#101b3d','#0d9488','#d97706','#7c3aed','#dc2626','#16a34a','#be185d','#0369a1','#c99a3e','#334155'];
+  const mt=daMonthlyTrend(trendRows);
+  const c1=document.getElementById('daChartTrend');
+  if(c1)daCharts.trend=new Chart(c1,{type:'bar',data:{labels:mt.labels,datasets:[
+    {type:'bar',label:'Billed',data:mt.billed,backgroundColor:'#101b3d',order:2},
+    {type:'line',label:'Collected',data:mt.collected,borderColor:'#0d9488',backgroundColor:'#0d9488',tension:.35,fill:false,order:1}
+  ]},options:daChartOpts()});
+
+  const yt=daYearlyTotals(trendRows);
+  const c2=document.getElementById('daChartYear');
+  if(c2)daCharts.year=new Chart(c2,{type:'bar',data:{labels:yt.labels,datasets:[{label:'Total Billed',data:yt.values,backgroundColor:'#0d9488'}]},options:daChartOpts()});
+
+  const pb=daProcessBreakdown(sliceRows);
+  const c3=document.getElementById('daChartProcess');
+  if(c3)daCharts.process=new Chart(c3,{type:'doughnut',data:{labels:Object.keys(pb),datasets:[{data:Object.values(pb),backgroundColor:palette}]},options:daDoughnutOpts()});
+
+  const sb=daStatusBreakdown(sliceRows);
+  const c4=document.getElementById('daChartStatus');
+  if(c4)daCharts.status=new Chart(c4,{type:'doughnut',data:{labels:Object.keys(sb),datasets:[{data:Object.values(sb),backgroundColor:palette}]},options:daDoughnutOpts()});
+
+  const py=daPayBreakdown(sliceRows);
+  const c5=document.getElementById('daChartPayment');
+  if(c5)daCharts.payment=new Chart(c5,{type:'doughnut',data:{labels:Object.keys(py),datasets:[{data:Object.values(py),backgroundColor:palette}]},options:daDoughnutOpts()});
+
+  const rank=daBuildClientRank(sliceRows).slice(0,10);
+  const c6=document.getElementById('daChartTopClients');
+  if(c6)daCharts.topClients=new Chart(c6,{type:'bar',data:{labels:rank.map(r=>r.name),datasets:[{label:'Billed',data:rank.map(r=>r.billed),backgroundColor:'#101b3d'}]},
+    options:Object.assign(daChartOptsH(),{onClick:(evt,els)=>{if(els.length){const c=rank[els[0].index];if(c)daDrillTo(c.id,'');}}})});
+}
+
+// ── exports ──
+function daExportExcel(){
+  const rows=daFilteredRequests();
+  if(!rows.length){toast('No data to export','w');return;}
+  if(typeof XLSX==='undefined'){toast('Excel library unavailable — try CSV export instead','e');return;}
+  const detail=rows.map(r=>({
+    'Request ID':r.id,'Client':r.clientName,'Process':r.dept||'','Employee':r.byName||'',
+    'Request Date':fd(r.requestDate),'Status':r.status,'PI No':r.piNumber||'',
+    'Invoice No':r.tallyInv||'','Invoice Date':fd(r.invoiceDate),
+    'Billed Amount':daAmt(r),'Collected Amount':daCollected(r),
+    'Outstanding':Math.max(0,daAmt(r)-daCollected(r)),'Payment Status':daPayStatus(r)
+  }));
+  const rank=daBuildClientRank(rows).map((c,i)=>({'Rank':i+1,'Client':c.name,'Requests':c.count,'Billed':c.billed,'Collected':c.collected,'Outstanding':c.outstanding,'Share %':c.pct.toFixed(1)}));
+  const totalBilled=rows.reduce((a,r)=>a+daAmt(r),0),totalCollected=rows.reduce((a,r)=>a+daCollected(r),0);
+  const summary=[
+    {Metric:'Total Requests',Value:rows.length},
+    {Metric:'Total Billed (INR)',Value:totalBilled.toFixed(2)},
+    {Metric:'Total Collected (INR)',Value:totalCollected.toFixed(2)},
+    {Metric:'Outstanding (INR)',Value:Math.max(0,totalBilled-totalCollected).toFixed(2)},
+    {Metric:'Distinct Clients',Value:new Set(rows.map(r=>r.clientId)).size},
+    {Metric:'Report Generated',Value:new Date().toLocaleString('en-IN')}
+  ];
+  try{
+    const wb=XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(summary),'Summary');
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rank),'Client-wise');
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(detail),'Transactions');
+    XLSX.writeFile(wb,'Data_Analysis_'+isoDate(new Date())+'.xlsx');
+    toast('Excel exported!','s');
+  }catch(e){console.error(e);toast('Export failed: '+e.message,'e');}
+}
+function daExportCSV(){
+  const rows=daFilteredRequests();
+  const detail=rows.map(r=>({
+    'Request ID':r.id,'Client':r.clientName,'Process':r.dept||'','Employee':r.byName||'',
+    'Request Date':fd(r.requestDate),'Status':r.status,'Billed Amount':daAmt(r),
+    'Collected Amount':daCollected(r),'Outstanding':Math.max(0,daAmt(r)-daCollected(r)),'Payment Status':daPayStatus(r)
+  }));
+  xls(detail,'Data_Analysis_'+isoDate(new Date()));
+}
+function daPrintReport(){
+  const rows=daFilteredRequests();
+  if(!rows.length){toast('No data to print','w');return;}
+  const rank=daBuildClientRank(rows).slice(0,15);
+  const totalBilled=rows.reduce((a,r)=>a+daAmt(r),0),totalCollected=rows.reduce((a,r)=>a+daCollected(r),0);
+  const outstanding=Math.max(0,totalBilled-totalCollected);
+  const bits=[];
+  if(daFrom)bits.push('From '+fd(daFrom));
+  if(daTo)bits.push('To '+fd(daTo));
+  if(daYear)bits.push('Year '+daYear);
+  if(daMonth)bits.push('Month '+(daMonthNames[+daMonth-1]||daMonth));
+  if(daClientF){const c=CLIENTS.find(x=>x.id===daClientF);if(c)bits.push('Client: '+c.company);}
+  if(daProcessF)bits.push('Process: '+daProcessF);
+  if(daStatusF)bits.push('Status: '+daStatusF);
+  if(daPayF)bits.push('Payment: '+daPayF);
+  if(daEmpF)bits.push('Employee: '+daEmpF);
+  if(daDrillClient){const c=CLIENTS.find(x=>x.id===daDrillClient);bits.push('Client: '+(c?c.company:daDrillClient));}
+  if(daDrillMonth)bits.push('Month: '+daMonthLabel(daDrillMonth));
+  const html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Data Analysis Report</title>
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;color:#12162c;padding:30px;font-size:13px}
+    h1{font-size:19px;margin-bottom:2px}h3{margin-top:22px}
+    .sub{color:#6c7188;font-size:12px;margin-bottom:18px}
+    table{width:100%;border-collapse:collapse;margin-bottom:10px}
+    th,td{border:1px solid #e6e8f0;padding:6px 9px;text-align:left;font-size:12px}
+    th{background:#f3f4f8}.r{text-align:right}
+    .kpis{display:flex;gap:14px;margin-bottom:20px;flex-wrap:wrap}
+    .kpi{border:1px solid #e6e8f0;border-radius:8px;padding:10px 16px;min-width:130px}
+    .kpi .l{font-size:10px;text-transform:uppercase;color:#6c7188;font-weight:700}
+    .kpi .v{font-size:17px;font-weight:800;margin-top:3px}
+    @media print{button{display:none!important}}
+  </style></head><body>
+  <button onclick="window.print()" style="float:right;padding:8px 16px">Print</button>
+  <h1>${esc(ORG_NAME)} — Data Analysis Report</h1>
+  <div class="sub">Generated ${new Date().toLocaleString('en-IN')}${bits.length?' · Filters: '+esc(bits.join(' · ')):' · All Data'}</div>
+  <div class="kpis">
+    <div class="kpi"><div class="l">Total Requests</div><div class="v">${rows.length}</div></div>
+    <div class="kpi"><div class="l">Total Billed</div><div class="v">${fmt(totalBilled)}</div></div>
+    <div class="kpi"><div class="l">Total Collected</div><div class="v">${fmt(totalCollected)}</div></div>
+    <div class="kpi"><div class="l">Outstanding</div><div class="v">${fmt(outstanding)}</div></div>
+    <div class="kpi"><div class="l">Distinct Clients</div><div class="v">${new Set(rows.map(r=>r.clientId)).size}</div></div>
+  </div>
+  <h3>Top Clients</h3>
+  <table><tr><th>#</th><th>Client</th><th>Requests</th><th class="r">Billed</th><th class="r">Collected</th><th class="r">Outstanding</th><th class="r">Share</th></tr>
+  ${rank.map((c,i)=>`<tr><td>${i+1}</td><td>${esc(c.name)}</td><td>${c.count}</td><td class="r">${fmt(c.billed)}</td><td class="r">${fmt(c.collected)}</td><td class="r">${fmt(c.outstanding)}</td><td class="r">${c.pct.toFixed(1)}%</td></tr>`).join('')}
+  </table>
+  <h3>Transactions (${rows.length})</h3>
+  <table><tr><th>Request ID</th><th>Client</th><th>Process</th><th>Date</th><th>Status</th><th>Payment</th><th class="r">Billed</th></tr>
+  ${rows.map(r=>`<tr><td>${esc(r.id)}</td><td>${esc(r.clientName)}</td><td>${esc(r.dept||'—')}</td><td>${fd(r.requestDate)}</td><td>${esc(r.status)}</td><td>${esc(daPayStatus(r))}</td><td class="r">${fmt(daAmt(r))}</td></tr>`).join('')}
+  </table>
+  <script>window.onload=function(){setTimeout(function(){window.print();},400);}<\/script>
+  </body></html>`;
+  openPDFWindow(html);
+}
+
+// ── SUMMARY VIEW ──
+function daRenderSummary(){
+  const rows=daFilteredRequests();
+  const trendRows=daTrendRows();
+  const totalBilled=rows.reduce((a,r)=>a+daAmt(r),0);
+  const totalCollected=rows.reduce((a,r)=>a+daCollected(r),0);
+  const outstanding=Math.max(0,totalBilled-totalCollected);
+  const completed=rows.filter(r=>r.status==='Completed').length;
+  const pendingPI=rows.filter(r=>r.status==='Pending for PI').length;
+  const activeClients=new Set(rows.map(r=>r.clientId).filter(Boolean)).size;
+  const avgBill=rows.length?totalBilled/rows.length:0;
+  const convRate=rows.length?(completed/rows.length*100):0;
+
+  const cmp=daMoMYoY(trendRows);
+  const rr=daRunRate(trendRows);
+  const rank=daBuildClientRank(rows);
+  const empRank=daBuildEmpRank(rows);
+  const dormant=daDormantClients();
+  const newClients=CLIENTS.filter(c=>{
+    if(!c.createdAt)return false;
+    if((daFrom||daTo)&&!inCustomRange(c.createdAt,daFrom,daTo))return false;
+    if(daYear&&daYearOf(c.createdAt)!==daYear)return false;
+    if(daMonth&&daMonthOf(c.createdAt)!==daMonth)return false;
+    return true;
+  }).length;
+  const repeatClients=rank.filter(c=>c.count>1).length;
+  const oneTimeClients=rank.filter(c=>c.count===1).length;
+  const top3Share=rank.length?rank.slice(0,3).reduce((a,c)=>a+c.pct,0):0;
+  const avgToInvoice=daAvgDays(rows,'requestDate','invoiceDate');
+  const avgToPayment=daAvgDays(rows,'invoiceDate','paymentDate');
+
+  const years=[...new Set(REQUESTS.map(r=>daYearOf(daDateKey(r))).filter(Boolean))].sort().reverse();
+  const statuses=[...new Set(REQUESTS.map(r=>r.status).filter(Boolean))];
+  const employees=[...new Set(REQUESTS.map(r=>r.byName).filter(Boolean))].sort();
+  const clientsSorted=[...CLIENTS].sort((a,b)=>(a.company||'').localeCompare(b.company||''));
+  const hasFilters=daFrom||daTo||daYear||daMonth||daClientF||daStatusF||daProcessF||daPayF||daEmpF;
+
+  let h=`<div class="ph"><div><h2>Data Analysis</h2><p class="ph-sub">Live billing &amp; performance analytics · ${rows.length} of ${REQUESTS.length} requests match current filters</p></div>
+  <div class="ph-act">
+    ${hasFilters?`<button class="btn bout" onclick="daResetFilters()">✕ Reset Filters</button>`:''}
+    <button class="btn bexp" onclick="daExportExcel()">⬇ Excel</button>
+    <button class="btn bteal" onclick="daExportCSV()">⬇ CSV</button>
+    <button class="btn borg" onclick="daPrintReport()">🖨 Print / PDF</button>
+  </div></div>
+
+  <div class="card" style="margin-bottom:18px"><div class="da-slicers">
+    <label class="dal">From<input type="date" class="fsel" value="${daFrom}" onchange="daFrom=this.value;daTblP=1;dDataAnalysis()"></label>
+    <label class="dal">To<input type="date" class="fsel" value="${daTo}" onchange="daTo=this.value;daTblP=1;dDataAnalysis()"></label>
+    <label class="dal">Year<select class="fsel" onchange="daYear=this.value;daTblP=1;dDataAnalysis()">
+      <option value="">All Years</option>${years.map(y=>`<option value="${y}" ${daYear===y?'selected':''}>${y}</option>`).join('')}</select></label>
+    <label class="dal">Month<select class="fsel" onchange="daMonth=this.value;daTblP=1;dDataAnalysis()">
+      <option value="">All Months</option>${daMonthNames.map((n,i)=>`<option value="${i+1}" ${daMonth===String(i+1)?'selected':''}>${n}</option>`).join('')}</select></label>
+    <label class="dal">Client<select class="fsel" onchange="daClientF=this.value;daTblP=1;dDataAnalysis()">
+      <option value="">All Clients</option>${clientsSorted.map(c=>`<option value="${c.id}" ${daClientF===c.id?'selected':''}>${esc(c.company)}</option>`).join('')}</select></label>
+    <label class="dal">Process<select class="fsel" onchange="daProcessF=this.value;daTblP=1;dDataAnalysis()">
+      <option value="">All Processes</option>${DEPTS.map(d=>`<option value="${esc(d)}" ${daProcessF===d?'selected':''}>${esc(d)}</option>`).join('')}</select></label>
+    <label class="dal">Status<select class="fsel" onchange="daStatusF=this.value;daTblP=1;dDataAnalysis()">
+      <option value="">All Status</option>${statuses.map(s=>`<option value="${esc(s)}" ${daStatusF===s?'selected':''}>${esc(s)}</option>`).join('')}</select></label>
+    <label class="dal">Payment<select class="fsel" onchange="daPayF=this.value;daTblP=1;dDataAnalysis()">
+      <option value="">All Payment</option>${['Paid','Partial','Overdue','Pending','Not Invoiced'].map(s=>`<option value="${s}" ${daPayF===s?'selected':''}>${s}</option>`).join('')}</select></label>
+    <label class="dal">Employee<select class="fsel" onchange="daEmpF=this.value;daTblP=1;dDataAnalysis()">
+      <option value="">All Employees</option>${employees.map(e=>`<option value="${esc(e)}" ${daEmpF===e?'selected':''}>${esc(e)}</option>`).join('')}</select></label>
+  </div></div>
+
+  <div class="sg">
+    <div class="sc c7"><div class="sc-ic">&#x20B9;</div><div class="sc-l">Total Billed</div><div class="sc-v" style="font-size:18px">${fmt(totalBilled)}</div></div>
+    <div class="sc c5"><div class="sc-ic">&#10003;</div><div class="sc-l">Total Collected</div><div class="sc-v" style="font-size:18px">${fmt(totalCollected)}</div></div>
+    <div class="sc c6"><div class="sc-ic">&#8987;</div><div class="sc-l">Outstanding</div><div class="sc-v" style="font-size:18px;color:${outstanding>0?'var(--red)':'var(--t1)'}">${fmt(outstanding)}</div></div>
+    <div class="sc c1"><div class="sc-ic">&#9776;</div><div class="sc-l">Total Requests</div><div class="sc-v">${rows.length}</div></div>
+    <div class="sc c3"><div class="sc-ic">&#9878;</div><div class="sc-l">Active Clients</div><div class="sc-v">${activeClients}</div></div>
+    <div class="sc c2"><div class="sc-ic">&#128176;</div><div class="sc-l">Avg Bill Value</div><div class="sc-v" style="font-size:16px">${fmt(avgBill)}</div></div>
+    <div class="sc c4"><div class="sc-ic">&#10024;</div><div class="sc-l">Conversion Rate</div><div class="sc-v">${convRate.toFixed(1)}%</div></div>
+    <div class="sc c6"><div class="sc-ic">&#9202;</div><div class="sc-l">Pending PI</div><div class="sc-v">${pendingPI}</div></div>
+  </div>
+
+  <div class="card" style="margin-bottom:18px">
+    <div class="card-hd"><h3>Growth &amp; Comparison</h3><span style="font-size:11px;color:var(--t3)">Calendar-based · respects Client/Process/Status/Employee filters, not the Date/Year/Month slicer above</span></div>
+    <div class="sg" style="margin-bottom:0">
+      <div class="sc c1"><div class="sc-l">This Month</div><div class="sc-v" style="font-size:16px">${fmt(cmp.thisMonth)}</div>${daTrendTag(cmp.momPct,'vs last month')}</div>
+      <div class="sc c2"><div class="sc-l">Last Month</div><div class="sc-v" style="font-size:16px">${fmt(cmp.lastMonth)}</div></div>
+      <div class="sc c3"><div class="sc-l">This Year</div><div class="sc-v" style="font-size:16px">${fmt(cmp.thisYear)}</div>${daTrendTag(cmp.yoyPct,'vs last year')}</div>
+      <div class="sc c4"><div class="sc-l">Last Year</div><div class="sc-v" style="font-size:16px">${fmt(cmp.lastYear)}</div></div>
+      <div class="sc c5"><div class="sc-l">MTD Run-Rate</div><div class="sc-v" style="font-size:16px">${fmt(rr.projected)}</div><div style="font-size:10px;color:var(--t3);margin-top:2px">Day ${rr.daysElapsed} of ${rr.daysInMonth} · ${fmt(rr.mtd)} so far</div></div>
+    </div>
+  </div>
+
+  <div class="da-grid2">
+    <div class="card"><div class="card-hd"><h3>Monthly Billing Trend</h3></div><div class="da-chart-box"><canvas id="daChartTrend"></canvas></div></div>
+    <div class="card"><div class="card-hd"><h3>Year-wise Billing</h3></div><div class="da-chart-box"><canvas id="daChartYear"></canvas></div></div>
+  </div>
+  <div class="da-grid3">
+    <div class="card"><div class="card-hd"><h3>Billing by Process</h3></div><div class="da-chart-box sm"><canvas id="daChartProcess"></canvas></div></div>
+    <div class="card"><div class="card-hd"><h3>Request Status</h3></div><div class="da-chart-box sm"><canvas id="daChartStatus"></canvas></div></div>
+    <div class="card"><div class="card-hd"><h3>Payment Status</h3></div><div class="da-chart-box sm"><canvas id="daChartPayment"></canvas></div></div>
+  </div>
+
+  <div class="da-grid2">
+    <div class="card"><div class="card-hd"><h3>Top 10 Clients by Billing</h3></div><div class="da-chart-box"><canvas id="daChartTopClients"></canvas></div></div>
+    <div class="card"><div class="card-hd"><h3>Key Insights</h3></div>
+      <div class="da-insight-row"><span class="lbl">Top 3 clients contribute</span><span class="val">${top3Share.toFixed(1)}%</span></div>
+      <div class="da-insight-row"><span class="lbl">Repeat clients (2+ bills)</span><span class="val">${repeatClients}</span></div>
+      <div class="da-insight-row"><span class="lbl">One-time clients</span><span class="val">${oneTimeClients}</span></div>
+      <div class="da-insight-row"><span class="lbl">New clients (this filter)</span><span class="val">${newClients}</span></div>
+      <div class="da-insight-row"><span class="lbl">Avg days: Request → Invoice</span><span class="val">${avgToInvoice!=null?avgToInvoice+' days':'—'}</span></div>
+      <div class="da-insight-row"><span class="lbl">Avg days: Invoice → Payment</span><span class="val">${avgToPayment!=null?avgToPayment+' days':'—'}</span></div>
+      <div class="da-insight-row"><span class="lbl">Dormant clients (90+ days inactive)</span><span class="val" style="color:${dormant.length?'var(--red)':'var(--t1)'}">${dormant.length}</span></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:18px">
+    <div class="card-hd"><h3>Client × Month Billing Matrix</h3><span style="font-size:11px;color:var(--t3)">Top 10 clients · last 12 active months · click a cell or client to drill down</span></div>
+    ${daBuildHeatmap(rows)}
+  </div>
+
+  <div class="card" style="margin-bottom:18px">
+    <div class="card-hd"><h3>Top &amp; Bottom Clients — Billing Contribution</h3></div>
+    ${daBuildRankTable(rank)}
+  </div>
+
+  ${empRank.length?`<div class="card" style="margin-bottom:18px">
+    <div class="card-hd"><h3>Top Employees by Billing Raised</h3></div>
+    <div class="tw"><table><tr><th>Employee</th><th>Requests</th><th>Billed</th></tr>
+    ${empRank.map(e=>`<tr><td>${esc(e.name)}</td><td>${e.count}</td><td class="amt">${fmt(e.billed)}</td></tr>`).join('')}
+    </table></div></div>`:''}
+
+  <div class="card">
+    <div class="ph" style="margin-bottom:12px"><h3 style="font-size:15px;font-weight:700">Detailed Filtered Data</h3></div>
+    <div class="tbar">
+      <div class="srch"><input id="daTblSrI" placeholder="Search request ID, client, employee, purpose…" oninput="daTblSr=this.value;daTblP=1;dDataAnalysis()" value="${esc(daTblSr)}"></div>
+      ${sortHtml('daTblSO','daTblSOSel','dDataAnalysis',daTblSO)}
+    </div>
+    ${daBuildDetailTable(rows)}
+  </div>`;
+  paintPA(h);
+  daRenderCharts(trendRows,rows);
+}
+
+// ── CLIENT DRILL VIEW ──
+function daRenderClientDrill(){
+  const client=CLIENTS.find(c=>c.id===daDrillClient);
+  const rows=daFilteredRequests();
+  const clientName=client?client.company:(rows[0]?rows[0].clientName:(REQUESTS.find(r=>r.clientId===daDrillClient)||{}).clientName||'Unknown Client');
+  const totalBilled=rows.reduce((a,r)=>a+daAmt(r),0);
+  const totalCollected=rows.reduce((a,r)=>a+daCollected(r),0);
+  const outstanding=Math.max(0,totalBilled-totalCollected);
+  const avgBill=rows.length?totalBilled/rows.length:0;
+
+  const clientAllRows=REQUESTS.filter(r=>r.clientId===daDrillClient)
+    .filter(r=>!daStatusF||r.status===daStatusF)
+    .filter(r=>!daProcessF||r.dept===daProcessF)
+    .filter(r=>!daPayF||daPayStatus(r)===daPayF)
+    .filter(r=>!daEmpF||r.byName===daEmpF);
+  const byM={};
+  clientAllRows.forEach(r=>{const ym=daYM(daDateKey(r));if(!ym)return;byM[ym]=(byM[ym]||0)+daAmt(r);});
+  const monthKeys=Object.keys(byM).sort();
+
+  let h=`<div class="da-breadcrumb">
+    <span class="bl" onclick="daBackToSummary()">◂ Data Analysis</span><span class="bs">/</span>
+    ${daDrillMonth?`<span class="bl" onclick="daBackToClient()">${esc(clientName)}</span><span class="bs">/</span><span class="bc">${esc(daMonthLabel(daDrillMonth))}</span>`:`<span class="bc">${esc(clientName)}</span>`}
+  </div>
+  <div class="ph"><div><h2>${esc(clientName)}</h2><p class="ph-sub">${client?esc(client.status||'')+' · Client since '+fd(client.createdAt):''}</p></div>
+  <div class="ph-act">
+    <button class="btn bexp" onclick="daExportExcel()">⬇ Excel</button>
+    <button class="btn bteal" onclick="daExportCSV()">⬇ CSV</button>
+    <button class="btn borg" onclick="daPrintReport()">🖨 Print / PDF</button>
+  </div></div>
+  <div class="sg">
+    <div class="sc c7"><div class="sc-l">Billed</div><div class="sc-v" style="font-size:17px">${fmt(totalBilled)}</div></div>
+    <div class="sc c5"><div class="sc-l">Collected</div><div class="sc-v" style="font-size:17px">${fmt(totalCollected)}</div></div>
+    <div class="sc c6"><div class="sc-l">Outstanding</div><div class="sc-v" style="font-size:17px;color:${outstanding>0?'var(--red)':'var(--t1)'}">${fmt(outstanding)}</div></div>
+    <div class="sc c1"><div class="sc-l">Requests</div><div class="sc-v">${rows.length}</div></div>
+    <div class="sc c2"><div class="sc-l">Avg Bill</div><div class="sc-v" style="font-size:16px">${fmt(avgBill)}</div></div>
+  </div>
+  ${!daDrillMonth?`<div class="card" style="margin-bottom:18px"><div class="card-hd"><h3>Month-wise Billing</h3><span style="font-size:11px;color:var(--t3)">Click a bar to drill into that month</span></div><div class="da-chart-box"><canvas id="daChartClientMonth"></canvas></div></div>`:''}
+  <div class="card">
+    <div class="ph" style="margin-bottom:12px"><h3 style="font-size:15px;font-weight:700">Transactions${daDrillMonth?' — '+esc(daMonthLabel(daDrillMonth)):''}</h3></div>
+    <div class="tbar">
+      <div class="srch"><input id="daTblSrI" placeholder="Search request ID, purpose…" oninput="daTblSr=this.value;daTblP=1;dDataAnalysis()" value="${esc(daTblSr)}"></div>
+      ${sortHtml('daTblSO','daTblSOSel','dDataAnalysis',daTblSO)}
+    </div>
+    ${daBuildDetailTable(rows)}
+  </div>`;
+  paintPA(h);
+  daDestroyCharts();
+  if(typeof Chart!=='undefined'&&!daDrillMonth){
+    const c=document.getElementById('daChartClientMonth');
+    if(c)daCharts.clientMonth=new Chart(c,{type:'bar',data:{labels:monthKeys.map(daMonthLabel),datasets:[{label:'Billed',data:monthKeys.map(k=>byM[k]),backgroundColor:'#0d9488'}]},
+      options:Object.assign(daChartOpts(),{onClick:(evt,els)=>{if(els.length){const ym=monthKeys[els[0].index];if(ym)daDrillTo(daDrillClient,ym);}}})});
+  }
 }
 
 </script>

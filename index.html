@@ -656,6 +656,7 @@ span[style*="color:rgba(255,193,7"]{color:var(--amber)!important}
       <button class="ni" data-p="cos" onclick="go('cos')" id="niCos" style="display:none"><svg viewBox="0 0 24 24"><path d="M12 7V3H2v18h20V7H12zM10 19H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 8h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10z"/></svg>Companies</button>
       <button class="ni" data-p="applinks" onclick="go('applinks')" id="niAppLinks" style="display:none"><svg viewBox="0 0 24 24"><path d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z"/></svg>Application Links</button>
       <button class="ni" data-p="mainpages" onclick="go('mainpages')" id="niMainPages" style="display:none"><svg viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>Main Pages</button>
+      <button class="ni" data-p="notifsettings" onclick="go('notifsettings')" id="niNotifSettings" style="display:none"><svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>Notification Settings</button>
       <div class="nl">Public Forms</div>
       <button class="ni" onclick="window.open('?form=enquiry','_blank')"><svg viewBox="0 0 24 24"><path d="M19 4H5c-1.11 0-2 .9-2 2v12c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.89-2-2-2zm0 14H5V8h14v10z"/></svg>Enquiry Form ↗</button>
       <button class="ni" onclick="window.open('?form=client','_blank')"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>Client Reg Form ↗</button>
@@ -1084,6 +1085,12 @@ function sLinks(){LS.s('lhr_links',APPLINKS)}
 
 let MAINPAGES=LS.g('lhr_mp')||[];
 function sMainPages(){LS.s('lhr_mp',MAINPAGES)}
+
+// Notification Control System (Admin) — always fetched live from the
+// server (no offline/localStorage fallback: there's no meaningful offline
+// story for controlling who gets emailed, and the "Currently reaches"
+// preview must reflect the real spreadsheet, not a stale local copy).
+let NOTIFCONFIG=[];
 
 // ════════════════════════════════════
 //  HELPERS
@@ -1723,7 +1730,7 @@ async function bootApp(){
   const isAdm=u.role==='admin';
   const isTaskManager=isTaskManagerRole();
   ['niPI','niInv','niPay'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display=isAcc?'':'none'});
-  ['niAdLbl','niUsers','niCos','niEmp','niAppLinks','niMainPages'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display=isAdm?'':'none'});
+  ['niAdLbl','niUsers','niCos','niEmp','niAppLinks','niMainPages','niNotifSettings'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display=isAdm?'':'none'});
   ['niAllTasks','niAppraisal','niTaskRep'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display=isTaskManager?'':'none'});
   ['niTaskImport','niTaskCats'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display=isAdm?'':'none'});
   // GAS connected — clear local cache, load fresh from sheet
@@ -1769,9 +1776,9 @@ async function bootApp(){
 // ════════════════════════════════════
 //  NAV
 // ════════════════════════════════════
-const PTITLES={home:'Home',dash:'Dashboard',enq:'Enquiries',clients:'Client Master',myreq:'My Bill Requests',newreq:'New Bill Request',allreq:'All Requests',pi:'PI Management',inv:'Invoice Upload',payments:'Payment Tracker',rep:'Reports',users:'User Management',employees:'Employee Master',cos:'Companies',applinks:'Application Links',mainpages:'Main Page Management',danalysis:'Data Analysis',
+const PTITLES={home:'Home',dash:'Dashboard',enq:'Enquiries',clients:'Client Master',myreq:'My Bill Requests',newreq:'New Bill Request',allreq:'All Requests',pi:'PI Management',inv:'Invoice Upload',payments:'Payment Tracker',rep:'Reports',users:'User Management',employees:'Employee Master',cos:'Companies',applinks:'Application Links',mainpages:'Main Page Management',danalysis:'Data Analysis',notifsettings:'Notification Settings',
   taskdash:'Task Dashboard',mytasks:'My Tasks',alltasks:'All Tasks',taskappraisal:'Appraisals',taskimport:'Bulk Import Tasks',taskcats:'Task Categories',taskrep:'Task Reports'};
-const PFNS={home:rHome,dash:rDash,enq:rEnq,clients:rClients,myreq:rMyReq,newreq:rNewReq,allreq:rAllReq,pi:rPI,inv:rInv,payments:rPayments,rep:rRep,users:rUsers,employees:rEmployees,cos:rCos,applinks:rAppLinks,mainpages:rMainPages,danalysis:rDataAnalysis,
+const PFNS={home:rHome,dash:rDash,enq:rEnq,clients:rClients,myreq:rMyReq,newreq:rNewReq,allreq:rAllReq,pi:rPI,inv:rInv,payments:rPayments,rep:rRep,users:rUsers,employees:rEmployees,cos:rCos,applinks:rAppLinks,mainpages:rMainPages,danalysis:rDataAnalysis,notifsettings:rNotifSettings,
   taskdash:rTaskDash,mytasks:rMyTasks,alltasks:rAllTasks,taskappraisal:rAppraisal,taskimport:rTaskImport,taskcats:rTaskCats,taskrep:rTaskRep};
 
 function go(p){
@@ -3730,6 +3737,76 @@ async function moveMainPage(id,dir){
     const res=await gasCall('reorderMainPages',{order});
     if(!res.success){toast(res.error||'Failed to save new order','e');_forceRefresh('mainpages');rMainPages();}
   }
+}
+
+// ════════════════════════════════════════════════════════════
+//  NOTIFICATION SETTINGS (Admin) — Notification Control System (v2.8.0).
+//  Every email this app sends is registered backend-side as one named rule
+//  (Code.gs NOTIFICATION_RULES). This page lists them grouped by category,
+//  shows each rule's current ON/OFF state and — where the recipient set
+//  isn't specific to one bill/task/enquiry — exactly which live email
+//  addresses it currently resolves to, and lets Admin flip it on/off.
+//  Fixes the "Bill Generation emails go to everyone" report: rule
+//  BILL_BROADCAST (the company-wide FYI copy) now defaults OFF.
+// ════════════════════════════════════════════════════════════
+async function rNotifSettings(){
+  const hadCache=NOTIFCONFIG.length>0;
+  if(hadCache)dNotifSettings();
+  if(GAS_OK&&_shouldRefresh('notifconfig')){
+    const res=await gasCall('getNotificationConfig',{});
+    if(!stillOn('notifsettings'))return;
+    if(res.success){NOTIFCONFIG=res.data;}
+    else if(!hadCache){toast('Failed to load notification settings: '+(res.error||''),'e');}
+  }
+  if(!stillOn('notifsettings'))return;
+  dNotifSettings();
+}
+function notifRecipientsText(r){
+  if(Array.isArray(r))return r.length?r.join(', '):'(none configured on the Users sheet)';
+  if(r&&r.note)return r.note;
+  return '—';
+}
+function dNotifSettings(){
+  if(!NOTIFCONFIG.length){
+    paintPA(`<div class="ph"><div><h2>Notification Settings</h2><p class="ph-sub">Loading notification rules…</p></div></div><div class="card"><div class="loading"><div class="sp"></div></div></div>`);
+    return;
+  }
+  const cats=[...new Set(NOTIFCONFIG.map(r=>r.category))];
+  let h=`<div class="ph"><div><h2>Notification Settings</h2><p class="ph-sub">Every email this app can send, grouped by area — ${NOTIFCONFIG.length} rule${NOTIFCONFIG.length===1?'':'s'}. Turn any of them on or off; "Currently reaches" shows exactly who it resolves to right now.</p></div>
+  <button class="btn bout" onclick="_forceRefresh('notifconfig');rNotifSettings()">↻ Refresh</button></div>`;
+  cats.forEach(cat=>{
+    const rows=NOTIFCONFIG.filter(r=>r.category===cat);
+    h+=`<div class="card" style="margin-bottom:16px"><div class="card-hd"><h3>${esc(cat)}</h3></div>`;
+    rows.forEach(r=>{
+      h+=`<div style="padding:12px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap">
+        <div style="flex:1 1 340px;min-width:0">
+          <div style="font-weight:600;color:var(--t1);font-size:13.5px">${esc(r.name)}</div>
+          <div style="font-size:12px;color:var(--t3);margin-top:3px;line-height:1.55">${esc(r.description)}</div>
+          <div style="font-size:11.5px;color:var(--t2);margin-top:7px;line-height:1.5"><strong>Currently reaches:</strong> ${esc(notifRecipientsText(r.recipients))}</div>
+          ${r.updatedBy?`<div style="font-size:11px;color:var(--t3);margin-top:4px">Last changed by ${esc(r.updatedBy)}${r.updatedAt?(' · '+fd(r.updatedAt)):''}</div>`:''}
+        </div>
+        <div style="flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+          <span class="bdg ${r.enabled?'bActive':'bRej'}">${r.enabled?'ON':'OFF'}</span>
+          <button class="ib ${r.enabled?'or':'gr'}" onclick="toggleNotifRule('${r.id}',${!r.enabled})">${r.enabled?'Turn Off':'Turn On'}</button>
+        </div>
+      </div>`;
+    });
+    h+=`</div>`;
+  });
+  paintPA(h);
+}
+async function toggleNotifRule(id,newEnabled){
+  const r=NOTIFCONFIG.find(x=>x.id===id);
+  let warn='';
+  if(newEnabled&&id==='BILL_BROADCAST')warn='\n\nThis will email EVERY OTHER active user in the system on EVERY future bill request — this is the setting that previously caused bill-request emails to reach the whole company.';
+  if(!confirm((newEnabled?'Turn ON':'Turn OFF')+' "'+(r?r.name:id)+'"?'+warn))return;
+  if(!GAS_OK){toast('Notification Settings require a live server connection','e');return}
+  showLoading('Updating…');
+  const res=await gasCall('saveNotificationConfig',{rules:[{id,enabled:newEnabled}]});
+  hideLoading();
+  if(!res.success){toast(res.error||'Failed to update','e');return}
+  toast(newEnabled?'Turned on':'Turned off','s');
+  _forceRefresh('notifconfig');rNotifSettings();
 }
 
 // ════════════════════════════════════════════════════════════

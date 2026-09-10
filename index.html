@@ -186,6 +186,33 @@ nav{flex:1;padding:8px 0}
 .pcard.total .pcard-v{color:#fff}
 .pcard.total .pcard-p{color:rgba(255,255,255,.6)}
 
+/* ── HOME PAGE — hero banner + application-link card grid ── */
+.home-hero{background:radial-gradient(circle at 85% 0%, rgba(201,154,62,.20), transparent 55%),
+    linear-gradient(135deg,var(--primary-d) 0%,var(--primary) 60%,var(--primary-h) 100%);
+  border-radius:18px;padding:30px 32px;display:flex;align-items:center;justify-content:space-between;
+  gap:18px;flex-wrap:wrap;box-shadow:var(--sh3);position:relative;overflow:hidden}
+.home-hero::before{content:'';position:absolute;inset:0;pointer-events:none;opacity:.3;
+  background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);
+  background-size:28px 28px}
+.home-hero-t{position:relative;z-index:1;min-width:0}
+.home-hero-t h2{color:#fff;font-size:22px;font-weight:800;letter-spacing:-.01em}
+.home-hero-t p{color:rgba(255,255,255,.65);font-size:13.5px;margin-top:6px;max-width:520px;line-height:1.55}
+.home-hero .btn{position:relative;z-index:1;flex-shrink:0}
+.hgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:16px;margin-bottom:8px}
+.hcard{background:#fff;border:1.5px solid var(--border);border-radius:16px;box-shadow:var(--sh);
+  padding:20px;display:flex;flex-direction:column;gap:10px;cursor:pointer;transition:all .18s;
+  text-decoration:none;position:relative}
+.hcard:hover{transform:translateY(-3px);box-shadow:var(--sh2);border-color:var(--gold-l)}
+.hcard-ic{width:48px;height:48px;border-radius:13px;background:var(--gold-bg);color:var(--gold);
+  display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.hcard-b{min-width:0;flex:1}
+.hcard-t{font-size:14.5px;font-weight:800;color:var(--t1);line-height:1.3}
+.hcard-d{font-size:12px;color:var(--t3);margin-top:4px;line-height:1.5;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.hcard-go{font-size:11px;font-weight:700;color:var(--gold);letter-spacing:.03em;margin-top:2px}
+.hcard.inactive{opacity:.55}
+.reorder-grp{display:flex;flex-direction:column;gap:3px}
+
 /* ── CARD ── */
 .card{background:#fff;border:1px solid var(--border);border-radius:var(--r);box-shadow:var(--sh);padding:22px}
 .card-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px}
@@ -568,11 +595,13 @@ span[style*="color:rgba(255,193,7"]{color:var(--amber)!important}
     </div>
     <nav>
       <div class="nl">Main</div>
-      <button class="ni active" data-p="dash" onclick="go('dash')"><svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>Dashboard</button>
+      <button class="ni" data-p="dash" onclick="go('dash')" id="niDash"><svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>Dashboard</button>
+      <button class="ni active" data-p="home" onclick="go('home')" id="niHome"><svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>Home</button>
+      <div id="mainPagesNavSlot"></div>
       <div class="nl">Enquiry</div>
       <button class="ni" data-p="enq" onclick="go('enq')"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>Enquiries</button>
       <button class="ni" data-p="clients" onclick="go('clients')"><svg viewBox="0 0 24 24"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/></svg>Client Master</button>
-      <div class="nl">Bills</div>
+      <div class="nl">Accounts</div>
       <button class="ni" data-p="myreq" onclick="go('myreq')" id="niMyReq"><svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6z"/></svg>My Bill Requests</button>
       <button class="ni" data-p="newreq" onclick="go('newreq')"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>New Bill Request</button>
       <button class="ni" data-p="allreq" onclick="go('allreq')" id="niAll"><svg viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>All Requests</button>
@@ -593,6 +622,8 @@ span[style*="color:rgba(255,193,7"]{color:var(--amber)!important}
       <button class="ni" data-p="users" onclick="go('users')" id="niUsers" style="display:none"><svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 3-1.34 3-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5C15 14.17 10.33 13 8 13zm8 0c-.29 0-.62.02-.97.05C16.16 13.9 17 15.02 17 16.5V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>Users</button>
       <button class="ni" data-p="employees" onclick="go('employees')" id="niEmp" style="display:none"><svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>Employee Master</button>
       <button class="ni" data-p="cos" onclick="go('cos')" id="niCos" style="display:none"><svg viewBox="0 0 24 24"><path d="M12 7V3H2v18h20V7H12zM10 19H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 8h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10z"/></svg>Companies</button>
+      <button class="ni" data-p="applinks" onclick="go('applinks')" id="niAppLinks" style="display:none"><svg viewBox="0 0 24 24"><path d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z"/></svg>Application Links</button>
+      <button class="ni" data-p="mainpages" onclick="go('mainpages')" id="niMainPages" style="display:none"><svg viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>Main Pages</button>
       <div class="nl">Public Forms</div>
       <button class="ni" onclick="window.open('?form=enquiry','_blank')"><svg viewBox="0 0 24 24"><path d="M19 4H5c-1.11 0-2 .9-2 2v12c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.89-2-2-2zm0 14H5V8h14v10z"/></svg>Enquiry Form ↗</button>
       <button class="ni" onclick="window.open('?form=client','_blank')"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>Client Reg Form ↗</button>
@@ -651,6 +682,12 @@ function _shouldRefresh(key,minMs=20000){
   _lastFetch[key]=t;
   return true;
 }
+// Clears a key's throttle so the NEXT _shouldRefresh(key) call is
+// guaranteed to return true — used right after a save/delete/toggle so the
+// following re-render actually re-fetches the authoritative server copy
+// instead of possibly being skipped by the 20s throttle above and briefly
+// showing pre-edit data.
+function _forceRefresh(key){ delete _lastFetch[key]; }
 
 // ════════════════════════════════════
 //  DATA MAPPERS (GAS sheet → local)
@@ -691,6 +728,42 @@ function mapRequests(data){
     paymentMode:r.PaymentMode||'',paymentRemarks:r.PaymentRemarks||'',
     statusHistory:(r.History||[]).map(h=>({status:h.Status,by:h.ChangedBy,at:h.ChangedAt,note:h.Note||''}))
   }));
+}
+// AppLinks — backend already normalises Active to a real boolean and
+// SortOrder to a real number (see _buildAppLinksRows in Code.gs), but this
+// stays defensive (l.Active===true||l.Active==='TRUE') in case cached/
+// legacy data is ever read from localStorage instead of a fresh call.
+// PageID defaults to 'home' — matches the backfill value the backend
+// schema-sync writes for every link that existed before Main Pages did,
+// so pre-existing links keep showing on Home exactly as before.
+function mapAppLink(l){
+  return {id:l.LinkID,name:l.SystemName,url:l.URL,icon:l.Icon||'',desc:l.Description||'',
+    active:(l.Active===true||l.Active==='TRUE'),sortOrder:Number(l.SortOrder)||0,
+    page:l.PageID||'home',createdAt:l.CreatedAt||''};
+}
+// Main Pages — admin-created custom pages (e.g. Recruitment, Payroll)
+// shown in the sidebar after the fixed Dashboard/Home items.
+function mapMainPage(p){
+  return {id:p.PageID,name:p.Name,active:(p.Active===true||p.Active==='TRUE'),
+    sortOrder:Number(p.SortOrder)||0,createdAt:p.CreatedAt||''};
+}
+// Auto-picks a professional-looking icon for a link card based on its URL
+// — mirrors _detectLinkIcon() in Code.gs (the backend always recomputes
+// this at save time too, so a link's icon can never be typed/forced wrong;
+// this frontend copy only matters for the localStorage-only fallback path
+// when GAS is unreachable).
+function detectLinkIcon(url){
+  const u=String(url||'').toLowerCase();
+  if(u.includes('docs.google.com/spreadsheets')||u.includes('sheets.google.com'))return '📊';
+  if(u.includes('docs.google.com/forms')||u.includes('forms.gle'))return '📝';
+  if(u.includes('docs.google.com/document'))return '📄';
+  if(u.includes('docs.google.com/presentation'))return '📽️';
+  if(u.includes('script.google.com'))return '⚙️';
+  if(u.includes('drive.google.com'))return '📁';
+  if(u.includes('calendar.google.com'))return '📅';
+  if(u.includes('mail.google.com')||u.includes('gmail.com'))return '✉️';
+  if(u.includes('meet.google.com'))return '🎥';
+  return '🔗';
 }
 // ════════════════════════════════════
 //  GAS API BRIDGE
@@ -735,7 +808,16 @@ const GAS_RETRYABLE_ACTIONS = new Set([
   'login','logout','changePassword',
   'getTasks','getTask','getTaskCategories','getTaskAssignees','getNotifications',
   'getTaskDashboard','getAppraisalData','getTaskReportData',
-  'deleteTaskCategory'
+  'deleteTaskCategory',
+  // AppLinks: getAppLinks is a plain read. deleteAppLink is safe for the
+  // same reason deleteTaskCategory is above (a retry either succeeds or
+  // comes back "not found", never a duplicate). reorderAppLinks writes a
+  // full desired order every time, so repeating it is a no-op, not a
+  // duplicate. saveAppLink's CREATE path (no id) stays deliberately OUT of
+  // this set — see canRetry below, same treatment as saveTaskCategory.
+  'getAppLinks','deleteAppLink','reorderAppLinks',
+  // Main Pages: identical reasoning as the AppLinks trio above.
+  'getMainPages','deleteMainPage','reorderMainPages'
 ]);
 const GAS_RETRY_DELAYS = [800, 1800]; // ms — 2 retries total
 
@@ -815,7 +897,9 @@ async function gasCall(action, data={}, _attempt=0) {
   // out of GAS_RETRYABLE_ACTIONS entirely, on purpose — see the comment
   // above that Set.
   const canRetry = GAS_RETRYABLE_ACTIONS.has(action) ||
-    (action === 'saveTaskCategory' && !!data.id);
+    (action === 'saveTaskCategory' && !!data.id) ||
+    (action === 'saveAppLink' && !!data.id) ||
+    (action === 'saveMainPage' && !!data.id);
   try {
     const body = { action, ...data };
     if (SES && SES.token) body.token = SES.token;
@@ -962,6 +1046,12 @@ function sReq(){LS.s('lhr_req',REQUESTS)}
 
 let COMPANIES=LS.g('lhr_cos')||[];
 function sCos(){LS.s('lhr_cos',COMPANIES)}
+
+let APPLINKS=LS.g('lhr_links')||[];
+function sLinks(){LS.s('lhr_links',APPLINKS)}
+
+let MAINPAGES=LS.g('lhr_mp')||[];
+function sMainPages(){LS.s('lhr_mp',MAINPAGES)}
 
 // ════════════════════════════════════
 //  HELPERS
@@ -1601,7 +1691,7 @@ async function bootApp(){
   const isAdm=u.role==='admin';
   const isTaskManager=isTaskManagerRole();
   ['niPI','niInv','niPay'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display=isAcc?'':'none'});
-  ['niAdLbl','niUsers','niCos','niEmp'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display=isAdm?'':'none'});
+  ['niAdLbl','niUsers','niCos','niEmp','niAppLinks','niMainPages'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display=isAdm?'':'none'});
   ['niAllTasks','niAppraisal','niTaskRep'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display=isTaskManager?'':'none'});
   ['niTaskImport','niTaskCats'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.display=isAdm?'':'none'});
   // GAS connected — clear local cache, load fresh from sheet
@@ -1623,6 +1713,8 @@ async function bootApp(){
         CLIENTS=mapClients(res.clients);
         REQUESTS=mapRequests(res.requests);
         COMPANIES=(res.companies||[]).map(c=>({id:c.CoID,name:c.Name,gstin:c.GSTIN,address:c.Address,createdAt:c.CreatedAt||''}));
+        APPLINKS=(res.appLinks||[]).map(mapAppLink);
+        MAINPAGES=(res.mainPages||[]).map(mapMainPage);
         if(res.orgName) ORG_NAME=res.orgName;
       } else {
         console.error('bootstrap failed:',res.error);
@@ -1635,7 +1727,8 @@ async function bootApp(){
       hideLoading();
     }
   }
-  go('dash');
+  renderMainPagesNav();
+  go('home');
   refreshNotifCount();
   if(NOTIF_POLL_TIMER)clearInterval(NOTIF_POLL_TIMER);
   NOTIF_POLL_TIMER=setInterval(refreshNotifCount,60000);
@@ -1644,9 +1737,9 @@ async function bootApp(){
 // ════════════════════════════════════
 //  NAV
 // ════════════════════════════════════
-const PTITLES={dash:'Dashboard',enq:'Enquiries',clients:'Client Master',myreq:'My Bill Requests',newreq:'New Bill Request',allreq:'All Requests',pi:'PI Management',inv:'Invoice Upload',payments:'Payment Tracker',rep:'Reports',users:'User Management',employees:'Employee Master',cos:'Companies',
+const PTITLES={home:'Home',dash:'Dashboard',enq:'Enquiries',clients:'Client Master',myreq:'My Bill Requests',newreq:'New Bill Request',allreq:'All Requests',pi:'PI Management',inv:'Invoice Upload',payments:'Payment Tracker',rep:'Reports',users:'User Management',employees:'Employee Master',cos:'Companies',applinks:'Application Links',mainpages:'Main Page Management',
   taskdash:'Task Dashboard',mytasks:'My Tasks',alltasks:'All Tasks',taskappraisal:'Appraisals',taskimport:'Bulk Import Tasks',taskcats:'Task Categories',taskrep:'Task Reports'};
-const PFNS={dash:rDash,enq:rEnq,clients:rClients,myreq:rMyReq,newreq:rNewReq,allreq:rAllReq,pi:rPI,inv:rInv,payments:rPayments,rep:rRep,users:rUsers,employees:rEmployees,cos:rCos,
+const PFNS={home:rHome,dash:rDash,enq:rEnq,clients:rClients,myreq:rMyReq,newreq:rNewReq,allreq:rAllReq,pi:rPI,inv:rInv,payments:rPayments,rep:rRep,users:rUsers,employees:rEmployees,cos:rCos,applinks:rAppLinks,mainpages:rMainPages,
   taskdash:rTaskDash,mytasks:rMyTasks,alltasks:rAllTasks,taskappraisal:rAppraisal,taskimport:rTaskImport,taskcats:rTaskCats,taskrep:rTaskRep};
 
 function go(p){
@@ -3348,6 +3441,398 @@ async function delCo(id){
     return;
   }
   COMPANIES=COMPANIES.filter(x=>x.id!==id);sCos();toast('Deleted','s');rCos()
+}
+
+// ════════════════════════════════════════════════════════════
+//  HOME — landing page. Renders every ACTIVE AppLinks row whose page is
+//  'home' as a clickable card (opens in a new tab) plus a Quick Actions
+//  row into the existing core modules. APPLINKS/MAINPAGES are already
+//  populated from bootstrap by the time a user reaches this page (see
+//  bootApp), same as COMPANIES — this loader is a light background
+//  refresh, not the only way the data gets in, exactly like rCos()/dCos()
+//  above.
+// ════════════════════════════════════════════════════════════
+async function rHome(){
+  const hadCache=APPLINKS.length>0;
+  if(hadCache)dHome();
+  if(GAS_OK&&_shouldRefresh('applinks')){
+    const res=await gasCall('getAppLinks',{});
+    if(!stillOn('home'))return;
+    if(res.success){
+      APPLINKS=res.data.map(mapAppLink);sLinks();
+    } else if(!hadCache){
+      toast('Failed to load application links: '+(res.error||''),'e');
+    }
+  }
+  if(!stillOn('home'))return;
+  dHome();
+}
+function dHome(){
+  const u=SES.user,isAdm=u.role==='admin';
+  const links=[...APPLINKS].filter(l=>l.page==='home'&&l.active).sort((a,b)=>a.sortOrder-b.sortOrder);
+  const hh=new Date().getHours();
+  const greet=hh<12?'Good morning':hh<17?'Good afternoon':'Good evening';
+  const isAcc=u.role==='accounts'||u.role==='admin';
+
+  let h=`<div class="home-hero">
+    <div class="home-hero-t">
+      <h2>${greet}, ${esc(u.name.split(' ')[0])} 👋</h2>
+      <p>${esc(ORG_NAME||'Link HR Solution Pvt. Ltd.')} — your workspace for every company system, in one place.</p>
+    </div>
+    ${isAdm?`<button class="btn bout" onclick="go('applinks')" style="background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.4);color:#fff">⚙️ Manage Links</button>`:''}
+  </div>
+
+  <div class="ph" style="margin-top:26px"><div><h2>Company Systems</h2><p class="ph-sub">Quick access to every connected application</p></div>
+    ${isAdm?`<button class="btn badd" onclick="linkForm('','home')">+ Add System</button>`:''}
+  </div>`;
+
+  if(!links.length){
+    h+=`<div class="card" style="text-align:center;padding:46px 20px;margin-bottom:26px">
+      <div style="font-size:34px;margin-bottom:10px;opacity:.5">🧩</div>
+      <h3 style="font-size:15px;color:var(--t1);margin-bottom:6px">No systems added yet</h3>
+      <p style="font-size:13px;color:var(--t3);max-width:380px;margin:0 auto 16px;line-height:1.6">${isAdm?'Add your company\u2019s Sheets, Forms, and Web Apps here so everyone can find them from one place.':'Ask an Admin to add your company systems here.'}</p>
+      ${isAdm?`<button class="btn badd" onclick="linkForm('','home')" style="margin:0 auto">+ Add First System</button>`:''}
+    </div>`;
+  } else {
+    h+=`<div class="hgrid" style="margin-bottom:26px">`;
+    links.forEach(l=>{
+      h+=`<a class="hcard" href="${esc(l.url)}" target="_blank" rel="noopener noreferrer" title="${esc(l.desc||l.name)}">
+        <div class="hcard-ic">${l.icon?esc(l.icon):'🔗'}</div>
+        <div class="hcard-b">
+          <div class="hcard-t">${esc(l.name)}</div>
+          ${l.desc?`<div class="hcard-d">${esc(l.desc)}</div>`:''}
+        </div>
+        <div class="hcard-go">Open ↗</div>
+      </a>`;
+    });
+    h+=`</div>`;
+  }
+
+  h+=`<div class="ph"><div><h2>Quick Actions</h2><p class="ph-sub">Jump straight into your daily workflow</p></div></div>
+  <div class="hgrid">
+    <a class="hcard" href="javascript:void(0)" onclick="go('dash')"><div class="hcard-ic">📊</div><div class="hcard-b"><div class="hcard-t">Dashboard</div><div class="hcard-d">Enquiry-to-bill overview</div></div></a>
+    <a class="hcard" href="javascript:void(0)" onclick="go('enq')"><div class="hcard-ic">📥</div><div class="hcard-b"><div class="hcard-t">Enquiries</div><div class="hcard-d">Track new leads</div></div></a>
+    <a class="hcard" href="javascript:void(0)" onclick="go('newreq')"><div class="hcard-ic">💼</div><div class="hcard-b"><div class="hcard-t">New Bill Request</div><div class="hcard-d">Raise a billing request</div></div></a>
+    <a class="hcard" href="javascript:void(0)" onclick="go('${isAcc?'allreq':'myreq'}')"><div class="hcard-ic">🧾</div><div class="hcard-b"><div class="hcard-t">${isAcc?'All Requests':'My Bill Requests'}</div><div class="hcard-d">Track billing status</div></div></a>
+  </div>`;
+  paintPA(h);
+}
+
+// ════════════════════════════════════════════════════════════
+//  MAIN PAGES — dynamic sidebar nav (Recruitment/Payroll/etc.) + the
+//  generic card-grid renderer every custom page uses. Home stays its own
+//  hardcoded page above (dHome) — these functions only handle pages
+//  admins create beyond Dashboard/Home.
+// ════════════════════════════════════════════════════════════
+// (Re)draws the nav buttons for every ACTIVE custom Main Page into the
+// placeholder slot between Home and the "Enquiry" section. Called after
+// bootstrap loads MAINPAGES, and again after any Main Page CRUD/reorder so
+// the sidebar never drifts out of sync with the admin table.
+function renderMainPagesNav(){
+  const slot=document.getElementById('mainPagesNavSlot');
+  if(!slot)return;
+  const pages=[...MAINPAGES].filter(p=>p.active).sort((a,b)=>a.sortOrder-b.sortOrder);
+  slot.innerHTML=pages.map(p=>`<button class="ni${CUR_PAGE==='mp:'+p.id?' active':''}" data-p="mp:${esc(p.id)}" onclick="goMP('${p.id}')"><svg viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>${esc(p.name)}</button>`).join('');
+}
+// Builds the <option> list used by both the Link form's "Main Page"
+// selector and the Admin Link table's page filter — Home first (it isn't
+// a MainPages row, so it's added here explicitly), then every custom page
+// in sort order. Inactive pages are included (suffixed "(Inactive)") so a
+// link that's still sitting on a since-deactivated page is never
+// unreachable for editing/reassignment.
+function mainPageOptionsHtml(selected){
+  const pages=[{id:'home',name:'Home',active:true},...[...MAINPAGES].sort((a,b)=>a.sortOrder-b.sortOrder)];
+  return pages.map(p=>`<option value="${esc(p.id)}" ${p.id===selected?'selected':''}>${esc(p.name)}${p.active?'':' (Inactive)'}</option>`).join('');
+}
+async function goMP(pageId){
+  if(!SES)return;
+  CUR_PAGE='mp:'+pageId;
+  document.querySelectorAll('.ni').forEach(e=>e.classList.toggle('active',e.dataset.p===CUR_PAGE));
+  const pg=MAINPAGES.find(x=>x.id===pageId);
+  document.getElementById('tbTitle').textContent=pg?pg.name:'Page';
+  document.getElementById('pa').innerHTML='<div class="loading"><div class="sp"></div><p>Loading…</p></div>';
+  if(window.innerWidth<768){document.getElementById('sb').classList.remove('open');document.getElementById('sbo').classList.remove('show')}
+  await rCustomPage(pageId);
+}
+async function rCustomPage(pageId){
+  const hadCache=APPLINKS.length>0;
+  if(hadCache)dCustomPage(pageId);
+  if(GAS_OK&&_shouldRefresh('applinks')){
+    const res=await gasCall('getAppLinks',{});
+    if(!stillOn('mp:'+pageId))return;
+    if(res.success){APPLINKS=res.data.map(mapAppLink);sLinks();}
+    else if(!hadCache){toast('Failed to load application links: '+(res.error||''),'e');}
+  }
+  if(!stillOn('mp:'+pageId))return;
+  dCustomPage(pageId);
+}
+function dCustomPage(pageId){
+  const u=SES.user,isAdm=u.role==='admin';
+  const pg=MAINPAGES.find(x=>x.id===pageId);
+  if(!pg){paintPA(`<div class="card empty">This page is no longer available.</div>`);return}
+  const links=[...APPLINKS].filter(l=>l.page===pageId&&l.active).sort((a,b)=>a.sortOrder-b.sortOrder);
+  let h=`<div class="ph"><div><h2>${esc(pg.name)}</h2><p class="ph-sub">Quick access to every ${esc(pg.name)} system</p></div>
+    ${isAdm?`<div class="ph-act"><button class="btn badd" onclick="linkForm('','${pageId}')">+ Add Link</button><button class="btn bout" onclick="go('mainpages')">⚙ Manage Pages</button></div>`:''}
+  </div>`;
+  if(!links.length){
+    h+=`<div class="card" style="text-align:center;padding:46px 20px">
+      <div style="font-size:34px;margin-bottom:10px;opacity:.5">🧩</div>
+      <h3 style="font-size:15px;color:var(--t1);margin-bottom:6px">No links on this page yet</h3>
+      <p style="font-size:13px;color:var(--t3);max-width:360px;margin:0 auto 16px;line-height:1.6">${isAdm?`Add systems for ${esc(pg.name)} so your team can find them here.`:'Ask an Admin to add systems to this page.'}</p>
+      ${isAdm?`<button class="btn badd" onclick="linkForm('','${pageId}')" style="margin:0 auto">+ Add First Link</button>`:''}
+    </div>`;
+  } else {
+    h+=`<div class="hgrid">`;
+    links.forEach(l=>{
+      h+=`<a class="hcard" href="${esc(l.url)}" target="_blank" rel="noopener noreferrer" title="${esc(l.desc||l.name)}">
+        <div class="hcard-ic">${l.icon?esc(l.icon):'🔗'}</div>
+        <div class="hcard-b"><div class="hcard-t">${esc(l.name)}</div>${l.desc?`<div class="hcard-d">${esc(l.desc)}</div>`:''}</div>
+        <div class="hcard-go">Open ↗</div>
+      </a>`;
+    });
+    h+=`</div>`;
+  }
+  paintPA(h);
+}
+
+// ── Main Page Management (Admin) — add/edit/delete/activate/reorder the
+//    custom pages themselves (e.g. Recruitment, Payroll). ──
+async function rMainPages(){
+  const hadCache=MAINPAGES.length>0;
+  if(hadCache)dMainPages();
+  if(GAS_OK&&_shouldRefresh('mainpages')){
+    const res=await gasCall('getMainPages',{});
+    if(!stillOn('mainpages'))return;
+    if(res.success){MAINPAGES=res.data.map(mapMainPage);}
+    else if(!hadCache){toast('Failed to load main pages: '+(res.error||''),'e');}
+  }
+  if(!stillOn('mainpages'))return;
+  dMainPages();
+  renderMainPagesNav();
+}
+function dMainPages(){
+  const rows=[...MAINPAGES].sort((a,b)=>a.sortOrder-b.sortOrder);
+  let h=`<div class="ph"><div><h2>Main Page Management</h2><p class="ph-sub">Custom pages shown in the sidebar after Home — ${rows.length} page${rows.length===1?'':'s'}</p></div>
+  <button class="btn badd" onclick="mainPageForm()">+ Add Main Page</button></div>
+  <div class="card"><div class="tw"><table><tr><th style="width:56px">Order</th><th>Name</th><th>Links</th><th>Status</th><th>Actions</th></tr>`;
+  if(!rows.length)h+=`<tr><td colspan="5" class="empty">No custom Main Pages yet — click "+ Add Main Page" to create one (e.g. Recruitment, Payroll)</td></tr>`;
+  rows.forEach((p,idx)=>{
+    const linkCount=APPLINKS.filter(l=>l.page===p.id).length;
+    h+=`<tr>
+      <td><div class="reorder-grp">
+        <button class="ib" ${idx===0?'disabled':''} onclick="moveMainPage('${p.id}',-1)" title="Move up" style="padding:2px 8px;height:22px">▲</button>
+        <button class="ib" ${idx===rows.length-1?'disabled':''} onclick="moveMainPage('${p.id}',1)" title="Move down" style="padding:2px 8px;height:22px">▼</button>
+      </div></td>
+      <td><strong>${esc(p.name)}</strong></td>
+      <td>${linkCount} link${linkCount===1?'':'s'}</td>
+      <td><span class="bdg ${p.active?'bActive':'bRej'}">${p.active?'Active':'Inactive'}</span></td>
+      <td><div class="act">
+        <button class="ib" onclick="goMP('${p.id}')">View</button>
+        <button class="ib" onclick="mainPageForm('${p.id}')">Edit</button>
+        <button class="ib ${p.active?'or':'gr'}" onclick="toggleMainPage('${p.id}',${!p.active})">${p.active?'Deactivate':'Activate'}</button>
+        <button class="ib rd" onclick="delMainPage('${p.id}')">Delete</button>
+      </div></td>
+    </tr>`;
+  });
+  h+=`</table></div></div>`;
+  paintPA(h);
+}
+function mainPageForm(id=''){
+  const p=id?MAINPAGES.find(x=>x.id===id):{};const isE=!!p.id;
+  openM(isE?'Edit Main Page':'Add Main Page',`<div class="fg">
+    <div class="ff s2"><label>Page Name *</label><input id="mpN" value="${esc(p.name||'')}" placeholder="e.g. Recruitment"></div>
+  </div>`,`<button class="btn bout" onclick="closeM()">Cancel</button><button class="btn badd" onclick="saveMainPage('${id}')">Save</button>`);
+}
+async function saveMainPage(id){
+  const nm=v('mpN');
+  if(!nm){toast('Page name required','e');return}
+  if(GAS_OK){
+    showLoading(id?'Updating page…':'Adding page…');
+    const res=await gasCall('saveMainPage',{id,name:nm});
+    hideLoading();
+    if(!res.success){toast(res.error||'Failed to save page','e');return}
+    closeM();toast('Saved','s');_forceRefresh('mainpages');rMainPages();
+    return;
+  }
+  if(id){const idx=MAINPAGES.findIndex(x=>x.id===id);if(idx>-1)MAINPAGES[idx]={...MAINPAGES[idx],name:nm};}
+  else MAINPAGES.push({id:'MP-'+Date.now(),name:nm,active:true,sortOrder:MAINPAGES.length+1});
+  sMainPages();closeM();toast('Saved','s');rMainPages();
+}
+async function toggleMainPage(id,newActive){
+  if(GAS_OK){
+    showLoading('Updating…');
+    const res=await gasCall('saveMainPage',{id,active:newActive});
+    hideLoading();
+    if(!res.success){toast(res.error||'Failed to update','e');return}
+    toast(newActive?'Activated':'Deactivated','s');_forceRefresh('mainpages');rMainPages();
+    return;
+  }
+  const idx=MAINPAGES.findIndex(x=>x.id===id);if(idx>-1)MAINPAGES[idx].active=newActive;
+  sMainPages();toast(newActive?'Activated':'Deactivated','s');rMainPages();
+}
+async function delMainPage(id){
+  const linkCount=APPLINKS.filter(l=>l.page===id).length;
+  const msg=linkCount?`Delete this Main Page? Its ${linkCount} link(s) will be moved back to Home, not deleted.`:'Delete this Main Page? This cannot be undone.';
+  if(!confirm(msg))return;
+  if(GAS_OK){
+    showLoading('Deleting…');
+    const res=await gasCall('deleteMainPage',{id});
+    hideLoading();
+    if(!res.success){toast(res.error||'Failed to delete','e');return}
+    toast('Deleted','s');_forceRefresh('mainpages');_forceRefresh('applinks');rMainPages();
+    return;
+  }
+  APPLINKS.forEach(l=>{if(l.page===id)l.page='home'});sLinks();
+  MAINPAGES=MAINPAGES.filter(x=>x.id!==id);sMainPages();toast('Deleted','s');rMainPages();
+}
+async function moveMainPage(id,dir){
+  const rows=[...MAINPAGES].sort((a,b)=>a.sortOrder-b.sortOrder);
+  const idx=rows.findIndex(x=>x.id===id);
+  const swapIdx=idx+dir;
+  if(idx<0||swapIdx<0||swapIdx>=rows.length)return;
+  [rows[idx],rows[swapIdx]]=[rows[swapIdx],rows[idx]];
+  const order=rows.map(r=>r.id);
+  order.forEach((pid,i)=>{const p=MAINPAGES.find(x=>x.id===pid);if(p)p.sortOrder=i+1});
+  sMainPages();dMainPages();renderMainPagesNav();
+  if(GAS_OK){
+    const res=await gasCall('reorderMainPages',{order});
+    if(!res.success){toast(res.error||'Failed to save new order','e');_forceRefresh('mainpages');rMainPages();}
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+//  APPLICATION LINK MANAGEMENT (Admin) — add/edit/delete/activate/
+//  reorder/move-between-pages the links that show up as cards on Home and
+//  every custom Main Page above. The table is scoped to ONE Main Page at
+//  a time (via the filter dropdown) so ▲/▼ reordering — which only makes
+//  sense within a single page's own card order — is always unambiguous.
+// ════════════════════════════════════════════════════════════
+let alFilterPage='home'; // Admin Link table's current page filter
+async function rAppLinks(){
+  const hadCache=APPLINKS.length>0;
+  if(hadCache)dAppLinks();
+  if(GAS_OK&&_shouldRefresh('applinks')){
+    const res=await gasCall('getAppLinks',{});
+    if(!stillOn('applinks'))return;
+    if(res.success){
+      APPLINKS=res.data.map(mapAppLink);sLinks();
+    } else if(!hadCache){
+      toast('Failed to load application links: '+(res.error||''),'e');
+    }
+  }
+  if(!stillOn('applinks'))return;
+  dAppLinks();
+}
+function dAppLinks(){
+  const rows=[...APPLINKS].filter(l=>l.page===alFilterPage).sort((a,b)=>a.sortOrder-b.sortOrder);
+  let h=`<div class="ph"><div><h2>Application Link Management</h2><p class="ph-sub">${rows.length} link${rows.length===1?'':'s'} on this page</p></div>
+  <div class="ph-act">
+    <select class="fsel" id="alPageFilter" onchange="alFilterPage=this.value;dAppLinks()">${mainPageOptionsHtml(alFilterPage)}</select>
+    <button class="btn badd" onclick="linkForm('',alFilterPage)">+ Add Link</button>
+  </div></div>
+  <div class="card"><div class="tw"><table><tr><th style="width:56px">Order</th><th style="width:44px">Icon</th><th>System Name</th><th>URL</th><th>Description</th><th>Status</th><th>Actions</th></tr>`;
+  if(!rows.length)h+=`<tr><td colspan="7" class="empty">No application links on this page yet — click "+ Add Link" to create one</td></tr>`;
+  rows.forEach((l,idx)=>{
+    h+=`<tr>
+      <td><div class="reorder-grp">
+        <button class="ib" ${idx===0?'disabled':''} onclick="moveLink('${l.id}',-1)" title="Move up" style="padding:2px 8px;height:22px">▲</button>
+        <button class="ib" ${idx===rows.length-1?'disabled':''} onclick="moveLink('${l.id}',1)" title="Move down" style="padding:2px 8px;height:22px">▼</button>
+      </div></td>
+      <td style="font-size:20px">${l.icon?esc(l.icon):'🔗'}</td>
+      <td><strong>${esc(l.name)}</strong></td>
+      <td><a href="${esc(l.url)}" target="_blank" rel="noopener noreferrer" style="font-size:12px;color:var(--primary)">${esc(l.url.length>42?l.url.slice(0,42)+'…':l.url)}</a></td>
+      <td style="font-size:12px;color:var(--t3);max-width:220px">${esc(l.desc||'—')}</td>
+      <td><span class="bdg ${l.active?'bActive':'bRej'}">${l.active?'Active':'Inactive'}</span></td>
+      <td><div class="act">
+        <button class="ib" onclick="linkForm('${l.id}')">Edit</button>
+        <button class="ib ${l.active?'or':'gr'}" onclick="toggleLink('${l.id}',${!l.active})">${l.active?'Deactivate':'Activate'}</button>
+        <button class="ib rd" onclick="delLink('${l.id}')">Delete</button>
+      </div></td>
+    </tr>`;
+  });
+  h+=`</table></div></div>`;
+  paintPA(h);
+}
+// id: edit an existing link ('' = add new). presetPage: which Main Page to
+// preselect for a brand-new link (e.g. 'home', or the page you clicked
+// "+ Add Link" from). Icon is intentionally not a field here — it's always
+// auto-detected from the URL (see detectLinkIcon()/​_detectLinkIcon()), so
+// admins can't accidentally set a wrong/inconsistent one.
+function linkForm(id='',presetPage=''){
+  const l=id?APPLINKS.find(x=>x.id===id):{};const isE=!!l.id;
+  openM(isE?'Edit Link':'Add Link',`<div class="fg">
+    <div class="ff s2"><label>System / Link Name *</label><input id="lkN" value="${esc(l.name||'')}" placeholder="e.g. HR Task Manager"></div>
+    <div class="ff s2"><label>URL *</label><input id="lkU" value="${esc(l.url||'')}" placeholder="https://..."></div>
+    <div class="ff s2"><label>Main Page *</label><select id="lkP">${mainPageOptionsHtml(l.page||presetPage||'home')}</select></div>
+    <div class="ff"><label>Status</label><select id="lkA"><option value="TRUE" ${l.active!==false?'selected':''}>Active</option><option value="FALSE" ${l.active===false?'selected':''}>Inactive</option></select></div>
+    <div class="ff s2"><label>Description (optional)</label><textarea id="lkD" placeholder="What is this system used for?">${esc(l.desc||'')}</textarea></div>
+  </div>`,`<button class="btn bout" onclick="closeM()">Cancel</button><button class="btn badd" onclick="saveLink('${id}')">Save</button>`);
+}
+// Re-renders whichever AppLinks-driven view is currently on screen after a
+// save/toggle/delete, forcing a fresh server read first (see
+// _forceRefresh) so the visible result is always the authoritative
+// post-mutation state, never a throttled stale copy.
+function _refreshAppLinksView(){
+  _forceRefresh('applinks');
+  if(CUR_PAGE==='applinks')rAppLinks();
+  else if(CUR_PAGE==='home')rHome();
+  else if(CUR_PAGE&&CUR_PAGE.indexOf('mp:')===0)rCustomPage(CUR_PAGE.slice(3));
+}
+async function saveLink(id){
+  const nm=v('lkN'),url=v('lkU'),page=v('lkP')||'home';
+  if(!nm){toast('System name required','e');return}
+  if(!url){toast('URL required','e');return}
+  if(GAS_OK){
+    showLoading(id?'Updating link…':'Adding link…');
+    const res=await gasCall('saveAppLink',{id,name:nm,url,page,desc:v('lkD'),active:v('lkA')==='TRUE'});
+    hideLoading();
+    if(!res.success){toast(res.error||'Failed to save link','e');return}
+    closeM();toast('Saved','s');alFilterPage=page;_refreshAppLinksView();
+    return;
+  }
+  const normUrl=/^https?:\/\//i.test(url)?url:'https://'+url;
+  const icon=detectLinkIcon(normUrl);
+  if(id){const idx=APPLINKS.findIndex(x=>x.id===id);if(idx>-1)APPLINKS[idx]={...APPLINKS[idx],name:nm,url:normUrl,icon,desc:v('lkD'),active:v('lkA')==='TRUE',page};}
+  else APPLINKS.push({id:'APL-'+Date.now(),name:nm,url:normUrl,icon,desc:v('lkD'),active:true,page,sortOrder:APPLINKS.filter(l=>l.page===page).length+1});
+  sLinks();closeM();toast('Saved','s');alFilterPage=page;_refreshAppLinksView();
+}
+async function toggleLink(id,newActive){
+  if(GAS_OK){
+    showLoading('Updating…');
+    const res=await gasCall('saveAppLink',{id,active:newActive});
+    hideLoading();
+    if(!res.success){toast(res.error||'Failed to update','e');return}
+    toast(newActive?'Activated':'Deactivated','s');_refreshAppLinksView();
+    return;
+  }
+  const idx=APPLINKS.findIndex(x=>x.id===id);if(idx>-1)APPLINKS[idx].active=newActive;
+  sLinks();toast(newActive?'Activated':'Deactivated','s');_refreshAppLinksView();
+}
+async function delLink(id){
+  if(!confirm('Delete this application link? This cannot be undone.'))return;
+  if(GAS_OK){
+    showLoading('Deleting…');
+    const res=await gasCall('deleteAppLink',{id});
+    hideLoading();
+    if(!res.success){toast(res.error||'Failed to delete','e');return}
+    toast('Deleted','s');_refreshAppLinksView();
+    return;
+  }
+  APPLINKS=APPLINKS.filter(x=>x.id!==id);sLinks();toast('Deleted','s');_refreshAppLinksView();
+}
+async function moveLink(id,dir){
+  const rows=[...APPLINKS].filter(l=>l.page===alFilterPage).sort((a,b)=>a.sortOrder-b.sortOrder);
+  const idx=rows.findIndex(x=>x.id===id);
+  const swapIdx=idx+dir;
+  if(idx<0||swapIdx<0||swapIdx>=rows.length)return;
+  [rows[idx],rows[swapIdx]]=[rows[swapIdx],rows[idx]];
+  const order=rows.map(r=>r.id);
+  order.forEach((lid,i)=>{const l=APPLINKS.find(x=>x.id===lid);if(l)l.sortOrder=i+1});
+  sLinks();dAppLinks();
+  if(GAS_OK){
+    const res=await gasCall('reorderAppLinks',{order});
+    if(!res.success){toast(res.error||'Failed to save new order','e');_forceRefresh('applinks');rAppLinks();}
+  }
 }
 
 // ════════════════════════════════════════════════════════════
